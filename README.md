@@ -1,3 +1,4 @@
-# sample-system
-
-Sample Project for create new project
+# in Intellij create configuration maven to run project
+```
+clean spring-boot:run
+```

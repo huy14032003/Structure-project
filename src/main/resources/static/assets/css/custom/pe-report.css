@@ -1,0 +1,206 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#header{
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 1px;
+    margin-bottom: 5px;
+}
+.chart-sm{
+    background-color: #FFFFFF;
+    margin: 10px 0;
+    transition: all 0.5s;
+}
+#tblDetail thead th {
+    background: #efefef;
+    text-align: center;
+    border: 1px solid #cccccc;
+    padding: 5px !important;
+}
+
+#tblDetail tbody td{
+    border: 1px solid #cccccc;
+    background-color: #ffffff;
+    padding: 3px 10px;
+}
+
+.progress-bar {
+    background-color: #F1923E;
+    box-shadow: 1px 1px #ffffff;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background: #999999;
+}
+.row-parent {
+    position: relative;
+}
+.btn-back {
+    border: 1px solid;
+    padding: 5px 10px;
+    background-color: #FFF;
+    position: absolute;
+    right: 10px;
+    top: 20px;
+    z-index: 10;
+}
+
+.table-sticky thead th {
+    position: -webkit-sticky;
+    position : sticky;
+    top : -1px;
+}
+/* here is the trick */
+.table-sticky tbody:nth-of-type(1) tr:nth-of-type(1) td {
+    border-top: none !important;
+}
+.table-sticky thead th {
+    border-top: none !important;
+    border-bottom: none !important;
+    box-shadow: inset 0px 0px 0 #272727,
+                inset 0 -1px 0 #272727;
+}
+#tblModel > tbody > tr:nth-of-type(odd) > td {
+    background-color: #ffff86;
+}
+#tblDetail2 thead th {
+    background-color: #00d8ff;
+    padding: 3px 5px;
+    text-align: center;
+    border: 1px solid #272727;
+}
+#tblDetail2 thead tr:nth-of-type(2) th{
+    background-color: #00d8ff;
+    padding: 3px 5px;
+    text-align: center;
+    text-transform: uppercase;
+    position: -webkit-sticky;
+    position : sticky;
+    top : 26px;
+    box-shadow: inset 0px 0px 0 #272727,
+                inset 0px -1px 0 #272727;
+}
+#tblDetail2 tbody tr td {
+    background-color: #ffffff;
+    padding: 3px;
+    text-align: center;
+    border: 1px solid #272727;
+}
+.rate-danger{
+    background-color: #E66273 !important;
+}
+.rate-orange{
+    background-color: #DB843D !important;
+}
+.rate-warning{
+    background-color: #FFFF00 !important;
+}
+.rate-success{
+    background-color:#29be6e !important;
+}
+.popover{
+    margin-top:85px;
+    background-color: #FFFFFF;
+    border:1px solid #272727;
+    color:#272727;
+    box-shadow: 0.5rem 0.5rem 2rem #272727;
+}
+.popover-content {
+    padding: 10px;
+    text-align: center;
+    background-color: rgba(183, 210, 242, 0.65);
+}
+.class-dueDate{
+    color: #353535;
+    padding-left: 0px;
+}
+.class-textarea span{
+    color: #353535;
+}
+.select-textarea{
+    background: #FFFFFF;
+    height: 33px;
+    width: 150%;
+    margin-left: -13px;
+    margin-top: 0px;
+}
+
+.class-dueDate option{
+    color: #353535;
+    padding-left: 0px;
+}
+.class-textarea .input-group input{
+    color: #353535;
+    /* margin-top: 20px; */
+}
+.class-textarea textarea{
+    margin-top: 0px;
+}
+.class-key-model{
+    /* color: #1E88E5; */
+    color: #6ab4ef;
+}
+#tbl-top-3-pe-issue>tbody td {
+    background: #FFFFFF;
+    font-size: 14px;
+}
+.class-textarea textarea{
+    color: #353535;
+}
+#tbl-top-3-pe-issue tr th{
+    background-color: #00d8ff;
+    text-transform: uppercase;
+    /* border: 1px solid #cccccc; */
+    /* position: sticky; */
+    padding: 5px;
+}
+.class-button{
+    text-align: center;
+}
+.class-columns{
+    padding: 8px;
+    padding-bottom: 5px !important;
+    padding-top: 5px !important;
+}
+.model-link{
+    font-weight: bold;
+}
+#tblChart tr td {
+    padding: 0;
+    text-align: center;
+    background-color: #FFF;
+}
+#tblChart tr td:nth-child(2) {
+    width: 90%;
+}
+.chart-table {
+    width: 100%;
+    height: 180px;
+    margin: 0;
+    border: 0;
+}
+.bs-searchbox + .bs-actionsbox {
+    padding: 0;
+}
+.actions-btn.btn {
+    width: 49% !important;
+    float: left;
+}
+.btn-group, .btn-group-vertical {
+    position: unset;
+}
+.btn-group.bootstrap-select {
+    height: auto;
+}
+.btn.dropdown-toggle {
+    padding: 4px 10px;
+}
+.btn.dropdown-toggle span {
+    max-width: 350px;
+}
+.bootstrap-select.btn-group .btn .caret {
+    width: 20px;
+}

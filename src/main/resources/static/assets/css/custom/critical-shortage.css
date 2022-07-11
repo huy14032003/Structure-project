@@ -1,0 +1,206 @@
+#header{
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 1px;
+    margin-bottom: 5px;
+    background-color: #003D9D;
+    color: #FFF;
+}
+
+.btn-custom {
+    padding: 3px 10px;
+    margin-left: 5px;
+    font-weight: 400;
+}
+.btn-primary {
+    background-color: #003D9D !important;
+}
+.btn-custom.active {
+    background-color: #00245e !important;
+    font-weight: 600;
+}
+.btn.dropdown-toggle {
+    padding: 3px 10px;
+    border-radius: 3px;
+    background: #FFF !important;
+    border: 1px solid #B7B7B7;
+}
+.btn.dropdown-toggle .caret:after {
+    width: 10px;
+}
+.modal .modal-header {
+    padding: 5px 10px;
+    text-align: center;
+    background-color: #003D9D;
+    color: #FFF;
+}
+.modal .modal-header .close {
+    top: 25%;
+    color: #FFF;
+}
+#tblListDocNo thead tr th{
+    background-color: #CCFFFF;
+    color: blue;
+    border: 1px solid #B7B7B7;
+    text-align: center;
+}
+#tblListDocNo tbody tr td {
+    background-color: #FFF;
+    cursor: pointer;
+}
+.table-hover > tbody > tr:hover > td {
+background-color: #EDEDED;
+}
+
+.control-label {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+input[name=focus-range] {
+    height: 26px;
+}
+input[name=accept-fr],
+input[name=using-edc] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.btn-config>i {
+    font-size: 20px;
+    line-height: 26px;
+}
+.btn-config.active {
+    color: #003d9d;
+}
+
+#tblConfig thead th {
+    background-color: #545b62;
+    color: #FFF;
+}
+.loader{
+    display: block;
+    position: fixed;
+    z-index: 1052;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(10, 10, 10, 0.8) 
+    url('/pm-system/assets/images/loadingg.gif') 
+    50% 50% 
+    no-repeat;
+}
+
+.table-responsive {
+    max-height: calc(100vh - 210px);
+}
+#tblDetail thead tr th {
+    background-color: #CCFFFF;
+    color: blue;
+    padding: 3px 5px;
+    border: 1px solid #B7B7B7;
+    text-align: center;
+}
+#tblDetail tbody tr td {
+    background-color: #FFFFFF;
+    padding: 3px 5px;
+    border: 1px solid #B7B7B7;
+    white-space: nowrap;
+}
+#tblDetail tbody tr td.demand {
+    background-color: #FFFFFF;
+}
+#tblDetail tbody tr td.supply {
+    background-color: #FFFFCC;
+}
+#tblDetail tbody tr td.demandTotal,
+#tblDetail tbody tr td.supplyTotal{
+    background-color: #CCFF99;
+}
+#tblDetail tbody tr.balance td {
+    background-color: #FFFF99;
+}
+#tblDetail tbody tr.action td {
+    background-color: #CCFFFF;
+}
+#tblDetail tbody tr td:nth-child(8){
+    text-align: center;
+}
+.riskRed {
+    background-color: red !important;
+}
+.riskOrange {
+    background-color: #ef6c00 !important;
+}
+.riskYellow {
+    background-color: #e4e428 !important;
+}
+.riskGreen {
+    background-color: green !important;
+}
+.input-group .input-group-addon {
+    padding: 3px 8px;
+    background-color: #FFF;
+    border: 1px solid #B7B7B7;
+    border-right: 0;
+    cursor: pointer;
+}
+.input-group .form-control {
+    padding: 3px 10px;
+    height: 29px;
+    background-color: #FFF;
+    border: 1px solid #B7B7B7;
+    border-radius: 0px 3px 3px 0px !important;
+}
+.pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+}
+
+.pagination a.current {
+    background-color: dodgerblue;
+    color: white;
+}
+
+.table-sticky thead th {
+    position: -webkit-sticky;
+    position : sticky;
+    top : -1px;
+}
+/* here is the trick */
+.table-sticky tbody:nth-of-type(1) tr:nth-of-type(1) td {
+    border-top: none !important;
+}
+.table-sticky thead tr:nth-of-type(2) th {
+    border-top: none !important;
+    top: 25px;
+}
+.table-sticky thead th {
+    border-top: none !important;
+    border-bottom: none !important;
+    box-shadow: inset 0 1px 0 #B7B7B7,
+                inset 0 -1px 0 #B7B7B7;
+}
+.bs-searchbox + .bs-actionsbox {
+    padding: 0;
+}
+.actions-btn.btn {
+    width: 49% !important;
+    float: left;
+}
+.btn-group, .btn-group-vertical {
+    position: unset;
+}
+.btn-group.bootstrap-select {
+    height: auto;
+}
+.btn.dropdown-toggle {
+    padding: 4px 10px;
+}
+.bootstrap-select.btn-group .btn .caret {
+    width: 20px;
+}
