@@ -30,6 +30,14 @@ public class MainMvcController {
     @Autowired
     private OAuth2Service authService;
 
+    @RequestMapping("/")
+    public String index(Model model) {
+        model.addAttribute("path", "home");
+        model.addAttribute("title", "Index");
+
+        return commonView(model, "application", null);
+    }
+
     @RequestMapping("/page-403")
     public String page403(Model model) {
         model.addAttribute("path", "page-403");

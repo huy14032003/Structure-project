@@ -1,26 +1,9 @@
-<style>
-    @media screen and (min-width: 1024px) and (max-width: 1365px) {
-        footer.main-footer {
-            font-size: 12px !important;
-        }
-    }
-
-    @media screen and (min-width: 1366px) and (max-width: 1919px) {
-        footer.main-footer {
-            font-size: 14px !important;
-        }
-    }
-</style>
-<footer class="main-footer text-sm" style="line-height: 0px;">
-    <div class="float-right d-sm-inline-block">
-        <strong>
-            Copyright <span class="current-year"></span> by
-            <span style="color:#007BFF">Fii - Software</span>
-            <span>. All Rights Reserved</span>
-        </strong>
-        <script>
-            var currentYear = new Date().getFullYear();
-            $('.current-year').html(currentYear);
-        </script>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<div class="footer-wrapper">
+    <div class="footer-section f-section-1">
+        <p class="">Copyright © 2022 <a target="_blank" href="#">FII-SW Team</a>, All rights reserved.</p>
     </div>
-</footer>
+    <div class="footer-section f-section-2">
+        <p class="">Coded with <svg xmlns="#" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></p>
+    </div>
+</div>
