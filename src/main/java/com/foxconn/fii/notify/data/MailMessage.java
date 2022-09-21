@@ -5,8 +5,6 @@ import lombok.Data;
 @Data
 public class MailMessage {
 
-
-
     private String title;
 
     private String body;
@@ -21,6 +19,10 @@ public class MailMessage {
 
     public static MailMessage of (String title, String body) {
         return of(title, body, null, null, "", "");
+    }
+
+    public static MailMessage of (String title, String body, String attach, String fileName) {
+        return of(title, body, null, null, attach, fileName);
     }
 
     public static MailMessage of (String title, String body, String[] cc, String[] bcc, String attach, String fileName) {

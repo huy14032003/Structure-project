@@ -4,10 +4,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Factory {
+
     public static final String B03 = "B03";
     public static final String B04 = "B04";
     public static final String B05 = "B05";
-//    public static final String B06 = "B06";
+    public static final String B06 = "B06";
     public static final String C03 = "C03";
     public static final String BN3 = "BN3";
     public static final String F12 = "F12";

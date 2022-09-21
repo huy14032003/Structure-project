@@ -46,6 +46,7 @@ public class LanguageFilter implements Filter {
                     url += "?" + request.getQueryString();
                 }
                 Cookie cookie = new Cookie("previous_page", url);
+                cookie.setHttpOnly(true);
                 cookie.setPath("/");
                 response.addCookie(cookie);
             }

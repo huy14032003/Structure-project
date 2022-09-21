@@ -1,10 +1,12 @@
 package com.foxconn.fii;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.TaskScheduler;
@@ -16,6 +18,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 @Slf4j
@@ -41,9 +44,13 @@ public class Application extends SpringBootServletInitializer implements Command
         return threadPoolTaskScheduler;
     }
 
+    @Autowired
+    private MessageSource messageSource;
+
     @RequestMapping("/greeting")
-    public String greeting(HttpServletRequest request) {
-        return "Welcome to warning system!\n--- VN FII Team ---";
+    public String greeting(HttpServletRequest request, Locale locale) {
+//        return "Welcome to warning system!\n--- VN FII Team ---";
+        return messageSource.getMessage("greeting", null, locale);
     }
 
     @RequestMapping("api/time/now")

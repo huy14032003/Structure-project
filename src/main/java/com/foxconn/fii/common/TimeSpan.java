@@ -30,6 +30,7 @@ public class TimeSpan {
     private Date startDate;
 
     private Date endDate;
+
     public long getTimeRelax(Date starTime ,Date endTime) throws ParseException {
         SimpleDateFormat format=new SimpleDateFormat("yyyy/MM/dd HH:mm");
         SimpleDateFormat fm=new SimpleDateFormat("yyyy/MM/dd");

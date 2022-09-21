@@ -42,11 +42,14 @@ public class NotifyMessage {
         HALO,
         FII_CHAT,
         CIVET,
-        MAIL
+        MAIL,
+        FII_VN
     }
 
     public enum Type {
         TEXT,
+        IMAGE,
+        FILE,
         NEWS
     }
 }

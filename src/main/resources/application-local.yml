@@ -93,35 +93,13 @@ spring:
 # cron
 batch:
   cron:
-    sync-data: 0 9/10 0 * * *
-    sync-cpk: 45 0/30 0 * * *
-    sync-daily: 0 30 11 * * *
-    check-warning: 0 5/10 0 * * *
-    check-maintain-schedule: 0 30 7 * * *
-    check-maintain-spec: 0 0/15 0 * * *
-    outdated-tracking: 0 35 7,19 * * *
-    sync-hourly: 30 45 0 * * *
-    sync-hr-meal: 0 0 9 * 1 *
-    send-mail-hr-meal: 0 15 10 * 1 *
-    sync-daily-remain-re: 0 30 7 * 1 *
-    backup-hr-duty-data : 0 0 0 15 1 1
-    sync-daily-balance-re: 0 58 23 * 1 1
+    sample: 0 9/10 0 * * *
   fixed:
-    check-locked: 30000
-    check-notify-auto: 300000
-    tracking: 60000
-    notify-message: 60000
-    hr-card-history: 360000000
-    re-card-checkin: 360000000
+    sample: 30000
   initial:
-    check-locked: 5400000
-    check-notify-auto: 5400000
-    tracking: 10800000
-    notify-message: 7200000
-    hr-card-history: 360000000
-    re-card-checkin: 360000000
+    sample: 5400000
 
-b04:
+mssql:
   datasource:
     url: jdbc:h2:mem:b04;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
@@ -139,15 +117,16 @@ b04:
       connectionTestQuery: SELECT 1
       validationTimeout: 300000
 
-nbbsfc:
+oracle:
   datasource:
-    url: jdbc:h2:mem:bn3sfc;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-#    url: jdbc:oracle:thin:@10.225.35.11:1521/vnsfc
-#    username: hogan
-#    password: sfsselect
-##    driver-class-name: oracle.jdbc.driver.OracleDriver
-#    hibernate.dialect: org.hibernate.dialect.Oracle10gDialect
+    #    url: jdbc:oracle:thin:@10.239.89.252:1521:vnsfc
+    url: jdbc:oracle:thin:@10.225.35.11:1521:vnsfc
+    username: CQYR
+    password: cqyieldrate
+    #    username: nbbyr
+    #    password: nbbyr19
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    hibernate.dialect: org.hibernate.dialect.Oracle10gDialect
     configuration:
       connectionTimeout: 30000
       idleTimeout: 30000

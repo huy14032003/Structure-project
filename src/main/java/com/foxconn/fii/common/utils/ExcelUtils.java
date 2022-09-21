@@ -11,6 +11,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 @Slf4j
@@ -147,27 +148,29 @@ public class ExcelUtils {
         }
     }
 
-    public Date getDateValue(Cell cell, String pattern) {
+    public Date getDateValue(Cell cell, String... patterns) {
         if (cell == null) {
             return null;
         }
-
-        SimpleDateFormat df = new SimpleDateFormat(pattern);
 
         switch (cell.getCellType()) {
             case NUMERIC:
                 return DateUtil.getJavaDate(cell.getNumericCellValue());
             case STRING:
-                try {
-                    return df.parse(cell.getStringCellValue());
-                } catch (ParseException e) {
-                    log.error("### getDateValue format error {}", cell.getStringCellValue());
-                    throw CommonException.of("Cell {} is invalid format date {}", cell.getAddress(), pattern);
+                for (String pattern : patterns) {
+                    try {
+                        SimpleDateFormat df = new SimpleDateFormat(pattern);
+                        df.setLenient(false);
+                        return df.parse(cell.getStringCellValue());
+                    } catch (ParseException ignored) {}
                 }
+
+                log.error("### getDateValue format error {}", cell.getStringCellValue());
+                throw CommonException.of("Cell {} is invalid format date {}", cell.getAddress(), Arrays.toString(patterns));
             case BLANK:
                 return null;
             default:
-                throw CommonException.of("Cell {} is invalid format date {}", cell.getAddress(), pattern);
+                throw CommonException.of("Cell {} is invalid format date {}", cell.getAddress(), Arrays.toString(patterns));
         }
     }
 
