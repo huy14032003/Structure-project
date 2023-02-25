@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,14 +48,14 @@ public class Application extends SpringBootServletInitializer implements Command
     @Autowired
     private MessageSource messageSource;
 
-    @RequestMapping("/greeting")
+    @GetMapping("/greeting")
     public String greeting(HttpServletRequest request, Locale locale) {
 //        return "Welcome to warning system!\n--- VN FII Team ---";
         return messageSource.getMessage("greeting", null, locale);
     }
 
-    @RequestMapping("api/time/now")
-    public String getNow() {
+    @GetMapping("/api/time/now")
+    public String getTimeNow() {
         SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Calendar calendar = Calendar.getInstance();
         return df.format(calendar.getTime());
