@@ -3,13 +3,11 @@
 
 <c:choose>
     <c:when test="${path == 'home'}">
-        <%@ include file="component/home.jsp" %>
+        <%@ include file="component/sample/home.jsp" %>
     </c:when>
 
     <c:when test="${path == 'page-403'}">
         <%@ include file="component/error-page/page-403.jsp" %>
     </c:when>
-    <c:when test="${path == 'page-404'}">
-        <%@ include file="component/error-page/page-404.jsp" %>
-    </c:when>
+
 </c:choose>

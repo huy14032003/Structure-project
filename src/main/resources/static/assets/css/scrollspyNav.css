@@ -3,7 +3,7 @@
     top: 125px;
     width: 236px;
     height: auto;
-    border-left: 1px solid #e0e6ed;}
+    border-left: 1px solid #191e3a;}
 .sidenav .sidenav-header:after { display: none; }
 .sidenav .sidenav-header p {
     font-weight: 600;
@@ -25,19 +25,19 @@
 .sidenav .sidenav-content a {
     display: block;
     padding: 3px 0px;
-    color: #3b3f5c;
+    color: #bfc9d4;
     font-size: 12px;
     padding: 3px 25px;
 }
 .sidenav .sidenav-content a.active {
-    color: #5c1ac3;
+    color: #25d5e4;
     font-weight: 700;
-    border-left: 1px solid #5c1ac3;
+    border-left: 1px solid #25d5e4;
 }
 .sidenav .sidenav-content a:hover {
-    color: #1b55e2;
-    font-weight: 700;
-    border-left: 1px solid #5c1ac3;
+    color: #25d5e4;
+   font-weight: 700;
+    border-left: 1px solid #25d5e4;
 }
 #content > .container {
     display: flex;

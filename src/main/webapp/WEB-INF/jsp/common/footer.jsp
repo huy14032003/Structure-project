@@ -1,9 +1,29 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<div class="footer-wrapper">
-    <div class="footer-section f-section-1">
-        <p class="">Copyright © 2022 <a target="_blank" href="#">FII-SW Team</a>, All rights reserved.</p>
+<style>
+    footer {
+        line-height: 0px;
+        color: #343a40 !important;
+        background: #f8f9fa !important;
+        box-shadow: 0 -2px 5px #dee2e6;
+        font-weight: bold;
+    }
+
+    @media screen and (min-width: 1024px) and (max-width: 1365px) {
+        footer.main-footer {
+            font-size: 12px !important;
+        }
+    }
+
+    @media screen and (min-width: 1366px) and (max-width: 1919px) {
+        footer.main-footer {
+            font-size: 14px !important;
+        }
+    }
+</style>
+<aside class="control-sidebar control-sidebar-light"></aside>
+<footer class="main-footer py-2 text-sm" style="line-height: 0.5rem; background-color: #EDF6FF;">
+    <div class="d-inline-block w-100 text-right">
+        <strong>&copy; 2023. <span href="#" title="yu-kang.ruan@mail.foxconn.com">FII</span> by <a href="#" title="535-33716">Software Team</a> </strong>
+        <span>(cpe-vn-fii-sw@mail.foxconn.com)</span>
     </div>
-    <div class="footer-section f-section-2">
-        <p class="">Coded with <svg xmlns="#" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></p>
-    </div>
-</div>
+</footer>

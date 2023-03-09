@@ -1,6 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ page trimDirectiveWhitespaces="true"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ page trimDirectiveWhitespaces="true" %>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,64 +10,125 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>${title}</title>
-    <link rel="icon" type="image/ico" href="/sample-system/assets/img/logoFII.png">
+    <link rel="icon" type="image/ico" href="/sample-system/assets/images/logoFII.png">
 
-    <link href="/sample-system/assets/css/loader.css" rel="stylesheet" type="text/css" />
-    <script src="/sample-system/assets/js/loader.js"></script>
-    <!-- BEGIN GLOBAL MANDATORY STYLES -->
-    <!-- <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet"> -->
-    <link href="/sample-system/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <link href="/sample-system/assets/css/plugins.css" rel="stylesheet" type="text/css" />
-    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/sample-system/assets/dist/css/adminlte.min.css">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" type="text/css" href="/sample-system/assets/plugins/fontawesome-free/css/all.min.css">
+    <!-- Daterange picker -->
+    <link rel="stylesheet" href="/sample-system/assets/plugins/daterangepicker/daterangepicker.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="/sample-system/assets/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+    <!-- Boostrap select -->
+    <link rel="stylesheet" href="/sample-system/assets/plugins/bootstrap-select.1.13.14/dist/css/bootstrap-select.min.css">
+    <!-- Alertify JS -->
+    <link rel="stylesheet" href="/sample-system/assets/plugins/alertify/alertify.min.css">
+    <!-- jQuery timepicker -->
+    <link rel="stylesheet" href="/sample-system/assets/plugins/jquery-timepicker/jquery.timepicker.min.css">
+    <!-- Customize -->
+    <link rel="stylesheet" href="/sample-system/assets/css/custom/style.css">
 
-    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM STYLES -->
-    <link href="/sample-system/assets/plugins/apex/apexcharts.css" rel="stylesheet" type="text/css">
-    <link href="/sample-system/assets/css/dashboard/dash_1.css" rel="stylesheet" type="text/css" />
-    <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
+
+    <!-- jQuery -->
+    <script src="/sample-system/assets/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="/sample-system/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="/sample-system/assets/dist/js/adminlte.js"></script>
+    <!-- Optinal scripts -->
+    <script src="/sample-system/assets/dist/js/demo.js"></script>
+    <!-- Map -->
+    <!-- <link rel="stylesheet" type="text/css" href="/sample-system/assets/osm/mapbox-gl.css">
+    <script src="/sample-system/assets/osm/mapbox-gl.js"></script>
+    <link rel="stylesheet" type="text/css" href="/sample-system/assets/osm/mapbox.css">
+    <script src="/sample-system/assets/osm/mapbox.js"></script>
+    <script src="/sample-system/assets/osm/leaflet-hash.js"></script> -->
+    <!-- Highchart -->
+    <script type="text/javascript" src="/sample-system/assets/plugins/highchart_922/highcharts.js"></script>
+    <script type="text/javascript" src="/sample-system/assets/plugins/highchart_922/modules/drilldown.js"></script>
+    <script type="text/javascript" src="/sample-system/assets/plugins/highchart_922/grouped-categories.js"></script>
+    <!-- Daterangepicker -->
+    <script src="/sample-system/assets/plugins/moment/moment.min.js"></script>
+    <script src="/sample-system/assets/plugins/daterangepicker/daterangepicker.js"></script>
+    <!-- DataTables -->
+    <script src="/sample-system/assets/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="/sample-system/assets/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    <!-- Boostrap select -->
+    <script src="/sample-system/assets/plugins/bootstrap-select.1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <!-- Alertify JS -->
+    <script src="/sample-system/assets/plugins/alertify/alertify.min.js"></script>
+    <!-- jQuery timepicker -->
+    <script src="/sample-system/assets/plugins/jquery-timepicker/jquery.timepicker.min.js"></script>
+    <!-- Customize -->
+    <script src="/sample-system/assets/js/custom/core-customize.js"></script>
 </head>
 
-<body>
-    <!-- BEGIN LOADER -->
-    <div id="load_screen"> <div class="loader"> <div class="loader-content">
-        <div class="spinner-grow align-self-center"></div>
-    </div></div></div>
-    <!--  END LOADER -->
-    <!--  BEGIN MAIN CONTAINER  -->
-    <%@ include file="common/navbar.jsp" %>
-    <div class="main-container" id="container">
-
-        <div class="overlay"></div>
-        <div class="search-overlay"></div>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed sidebar-collapse">
+    <div class="wrapper">
+        <%@ include file="common/loader.jsp" %>
+        <%@ include file="common/navbar.jsp" %>
         <%@ include file="common/sidebar.jsp" %>
-        <!--  BEGIN CONTENT AREA  -->
-        <div id="content" class="main-content">
-            <%@ include file="router.jsp" %>
+        <div class="content-wrapper" style="background-color: #E6ECF2; overflow: hidden;">
+            <section class="content">
+                <div class="container-fluid">
+                    <%@ include file="router.jsp" %>
+                </div>
+            </section>
+            <aside class="control-sidebar control-sidebar-light">
+            </aside>
             <%@ include file="common/footer.jsp" %>
         </div>
-        <!--  END CONTENT AREA  -->
     </div>
-    <!-- END MAIN CONTAINER -->
-    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
-    <script src="/sample-system/assets/js/libs/jquery-3.1.1.min.js"></script>
-    <script src="/sample-system/assets/bootstrap/js/popper.min.js"></script>
-    <script src="/sample-system/assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/sample-system/assets/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script src="/sample-system/assets/js/app.js"></script>
     <script>
-        $(document).ready(function() {
-            App.init();
+        $(document).ready(function () {
+            showHistoryMenu();
         });
-    </script>
-    <script src="/sample-system/assets/js/custom.js"></script>
-    <!-- END GLOBAL MANDATORY SCRIPTS -->
 
-    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
-    <script src="/sample-system/assets/plugins/apex/apexcharts.min.js"></script>
-    <script src="/sample-system/assets/js/dashboard/dash_1.js"></script>
-    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
+        // Active menu
+        function showHistoryMenu() {
+            var path = '${path}';
+            var current_li = $('li[data-path="' + path + '"]');
+            current_li.children().css('background-color', '#ffffff1a');
+
+            var parent_li = current_li.parent();
+
+            if (parent_li.hasClass('nav-treeview')) {
+
+                var grandparent = parent_li.parent();
+                grandparent.addClass('menu-open');
+                grandparent.trigger('click');
+                grandparent.children()[0].style.backgroundColor = '#ffffff1a';
+
+                var root = grandparent.parent();
+                if (root.hasClass('nav-treeview')) {
+                    var ex_root = root.parent();
+                    ex_root.addClass('menu-open');
+                    ex_root.trigger('click');
+                }
+            } else {
+                current_li.addClass('menu-open');
+            }
+        }
+
+        function logout() {
+            var userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
+            if (!isFalsy(userInfo)) {
+                var name = formatUserName(userInfo);
+                alertify.confirm('<spring:message code="alert" />', '<spring:message code="signOut" /><b> ' + name + '</b>?', function () {
+                    window.localStorage.removeItem('userInfo');
+                    window.localStorage.removeItem('firstAccess');
+                    window.location.href = "/sample-system/logout";
+                }, function () {
+                    // Cancel
+                }).set('labels', {
+                    ok: '<spring:message code="ok" />',
+                    cancel: '<spring:message code="cancel" />'
+                });
+            }
+        }
+    </script>
 </body>
 
 </html>

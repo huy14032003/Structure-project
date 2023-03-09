@@ -1,146 +1,225 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<!--  BEGIN NAVBAR  -->
-<div class="header-container fixed-top">
-    <header class="header navbar navbar-expand-sm">
+<style>
+    .icon-language .input-group-text {
+        background: transparent;
+        border: 0;
+        color: #f3f3f3;
+        padding: 0 !important;
+    }
 
-        <ul class="navbar-item theme-brand flex-row  text-center">
-            <li class="nav-item theme-logo">
-                <a href="index.html">
-                    <img src="assets/img/logo.svg" class="navbar-logo" alt="logo">
+    #sl-language {
+        background: transparent;
+        border: 0;
+        color: #fff;
+    }
+
+    #sl-language option {
+        color: #212529;
+    }
+
+    .alertify-notifier.ajs-center.ajs-top .ajs-message.ajs-visible {
+        width: 400px !important;
+    }
+
+    li .dropdown-toggle::after {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+    }
+
+    @media screen and (min-width: 1024px) and (max-width: 1365px) {
+        nav.main-header {
+            font-size: 14px;
+        }
+
+        #sl-language {
+            font-size: 14px;
+        }
+    }
+
+    @media screen and (min-width: 1366px) and (max-width: 1919px) {
+        nav.main-header {
+            font-size: 15px;
+        }
+
+        #sl-language {
+            font-size: 15px;
+        }
+    }
+</style>
+
+<nav class="main-header navbar navbar-expand navbar-dark" style="background-color: #2061C5;">
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" style="font-weight: bold;" href="#">${title}</a>
+        </li>
+    </ul>
+
+    <ul class="navbar-nav ml-auto">
+        <li class="nav-item dropdown mr-3">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" id="lang-name"></a>
+            <div class="dropdown-menu dropdown-menu-left" id="list_language">
+                <div class="dropdown-item d-flex align-items-center justify-content-start" data-lang="vi-VN">
+                    <a href="javascript:void(0)">
+                        <img src="/sample-system/assets/images/language/vietnam.png" alt="VN">
+                        <spring:message code="vietnamese" />
+                    </a>
+                </div>
+                <div class="dropdown-item d-flex align-items-center" data-lang="en-US">
+                    <a href="javascript:void(0)">
+                        <img src="/sample-system/assets/images/language/united-kingdom.png" alt="VN">
+                        <spring:message code="english" />
+                    </a>
+                </div>
+                <div class="dropdown-item d-flex align-items-center" data-lang="zh-TW">
+                    <a href="javascript:void(0)">
+                        <img src="/sample-system/assets/images/language/china.png" alt="VN">
+                        <spring:message code="chinese" />
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item dropdown dropdown-hover">
+            <a class="nav-link" data-toggle="dropdown" href="#">
+                <i class="far fa-user"></i>
+                <span id="user-info"></span>
+                <span class="caret"></span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-sm dropdown-menu-right logout">
+                <a href="/sample-system/profile" class="dropdown-item">
+                    <i class="fas fa-user"></i>
+                    <spring:message code="profile" />
                 </a>
-            </li>
-            <li class="nav-item theme-text">
-                <a href="index.html" class="nav-link"> CORK </a>
-            </li>
-        </ul>
-
-        <ul class="navbar-item flex-row ml-md-0 ml-auto">
-            <li class="nav-item align-self-center search-animated">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search toggle-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <form class="form-inline search-full form-inline search" role="search">
-                    <div class="search-bar">
-                        <input type="text" class="form-control search-form-control  ml-lg-auto" placeholder="Search...">
-                    </div>
-                </form>
-            </li>
-        </ul>
-
-        <ul class="navbar-item flex-row ml-md-auto">
-
-            <li class="nav-item dropdown language-dropdown">
-                <a href="javascript:void(0);" class="nav-link dropdown-toggle" id="language-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="assets/img/ca.png" class="flag-width" alt="flag">
+                <a href="#" onclick="logout()" class="dropdown-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <spring:message code="logout" />
                 </a>
-                <div class="dropdown-menu position-absolute" aria-labelledby="language-dropdown">
-                    <a class="dropdown-item d-flex" href="javascript:void(0);"><img src="assets/img/de.png" class="flag-width" alt="flag"> <span class="align-self-center">&nbsp;German</span></a>
-                    <a class="dropdown-item d-flex" href="javascript:void(0);"><img src="assets/img/jp.png" class="flag-width" alt="flag"> <span class="align-self-center">&nbsp;Japanese</span></a>
-                    <a class="dropdown-item d-flex" href="javascript:void(0);"><img src="assets/img/fr.png" class="flag-width" alt="flag"> <span class="align-self-center">&nbsp;French</span></a>
-                    <a class="dropdown-item d-flex" href="javascript:void(0);"><img src="assets/img/ca.png" class="flag-width" alt="flag"> <span class="align-self-center">&nbsp;English</span></a>
-                </div>
-            </li>
+            </div>
+        </li>
+    </ul>
+</nav>
 
-            <li class="nav-item dropdown message-dropdown">
-                <a href="javascript:void(0);" class="nav-link dropdown-toggle" id="messageDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                </a>
-                <div class="dropdown-menu p-0 position-absolute" aria-labelledby="messageDropdown">
-                    <div class="">
-                        <a class="dropdown-item">
-                            <div class="d-none">
+<script>
+    getUserInfo();
+    var lang = window.localStorage.getItem('lang');
+    if (lang != null && lang != undefined && lang != '') {
+        if (getCookie('lang') == null || getCookie('lang') == undefined || getCookie('lang') == '') {
+            document.cookie = 'lang=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+            document.cookie = 'lang=' + lang + ';path=/';
+            window.location.reload();
+        } else {
+            if (lang != getCookie('lang')) {
+                window.localStorage.setItem('lang', getCookie('lang'));
+                window.location.reload();
+            }
+        }
+    } else {
+        if (getCookie('lang') == null || getCookie('lang') == undefined || getCookie('lang') == '') {
+            document.cookie = 'lang=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+            document.cookie = 'lang=vi-VN;path=/';
+            window.localStorage.setItem('lang', 'vi-VN');
+            window.location.reload();
+        } else {
+            window.localStorage.setItem('lang', getCookie('lang'));
+            window.location.reload();
+        }
+    }
 
-                                <div class="media">
-                                    <!-- <div class="user-img">
-                                        <img class="usr-img rounded-circle" src="assets/img/profile-11.jpg" alt="profile">
-                                    </div> -->
-                                    <div class="media-body">
-                                        <div class="">
-                                            <h5 class="usr-name">Kara Young</h5>
-                                            <p class="msg-title">ACCOUNT UPDATE</p>
-                                        </div>
-                                    </div>
-                                </div>
+    $(document).ready(function () {
+        $('#list_language .dropdown-item').on('click', function () {
+            let lang = this.dataset.lang;
+            document.cookie = 'lang=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+            document.cookie = 'lang=' + lang + ';path=/';
+            window.localStorage.setItem('lang', lang);
+            window.location.reload();
+        });
 
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </li>
+        checkImgLang();
+    });
 
-            <li class="nav-item dropdown notification-dropdown">
-                <a href="javascript:void(0);" class="nav-link dropdown-toggle" id="notificationDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg><span class="badge badge-success"></span>
-                </a>
-                <div class="dropdown-menu position-absolute" aria-labelledby="notificationDropdown">
-                    <div class="notification-scroll">
+    function checkImgLang() {
+        var lang = window.localStorage.getItem('lang');
+        let html = '';
+        if (lang == 'vi-VN') {
+            html =
+                `<div class="d-flex align-items-center justify-content-center">
+                    <img src="/sample-system/assets/images/language/vietnam.png" alt="VN">
+                    <span class="ml-2"><spring:message code="vietnamese" /></span>
+                </div>`;
+        } else if (lang == 'en-US') {
+            html =
+                `<div class="d-flex align-items-center justify-content-center">
+                    <img src="/sample-system/assets/images/language/united-kingdom.png" alt="EN">
+                    <span class="ml-2"><spring:message code="english" /></span>
+                </div>`;
+        } else if (lang == 'zh-TW') {
+            html =
+                `<div class="d-flex align-items-center justify-content-center" alt="CN">
+                    <img src="/sample-system/assets/images/language/china.png">
+                    <span class="ml-2"><spring:message code="chinese" /></span>
+                </div>`;
+        }
 
-                        <div class="dropdown-item">
-                            <div class="media">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                                <div class="media-body">
-                                    <div class="notification-para"><span class="user-name">Shaun Park</span> likes your photo.</div>
-                                </div>
-                            </div>
-                        </div>
+        $('#lang-name').html(html);
+    }
 
-                        <div class="dropdown-item">
-                            <div class="media">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-                                <div class="media-body">
-                                    <div class="notification-para"><span class="user-name">Kelly Young</span> shared your post</div>
-                                </div>
-                            </div>
-                        </div>
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
 
-                        <div class="dropdown-item">
-                            <div class="media">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
-                                <div class="media-body">
-                                    <div class="notification-para"><span class="user-name">Kelly Young</span> mentioned you in comment.</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </header>
-</div>
-<!--  END NAVBAR  -->
+    function getUserInfo() {
+        $.ajax({
+            type: 'GET',
+            url: '/sample-system/api/v4/user/current',
+            async: false,
+            success: function (res) {
+                var data = res.result;
+                if (!isFalsy(data)) {
+                    window.localStorage.setItem('userInfo', JSON.stringify(data));
+                    var userName = formatUserName(data);
+                    $('#user-info').html(userName);
+                }
+            },
+            error: function (err) {
+                // console.error(JSON.parse(err.responseText).message);
+                $('.logout').addClass('hidden');
+                $('.profile').addClass('hidden');
+            },
+            complete: function () {
+                var userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
+                if (!isFalsy(userInfo)) {
+                    var firstAccess = JSON.parse(window.localStorage.getItem('firstAccess'));
+                    if (firstAccess == null || firstAccess) {
+                        firstAccess = true;
+                    }
+                    if (firstAccess) {
+                        welcomeToSystem(userInfo);
+                        window.localStorage.setItem('firstAccess', false);
+                    }
+                }
+            }
+        });
+    }
 
-<!--  BEGIN NAVBAR  -->
-<div class="sub-header-container">
-    <header class="header navbar navbar-expand-sm">
-        <a href="javascript:void(0);" class="sidebarCollapse" data-placement="bottom"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></a>
-
-        <ul class="navbar-nav flex-row">
-            <li>
-                <div class="page-header">
-
-                    <nav class="breadcrumb-one" aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
-                            <li class="breadcrumb-item active" aria-current="page"><span>Sales</span></li>
-                        </ol>
-                    </nav>
-
-                </div>
-            </li>
-        </ul>
-        <ul class="navbar-nav flex-row ml-auto ">
-            <li class="nav-item more-dropdown">
-                <div class="dropdown  custom-dropdown-icon">
-                    <a class="dropdown-toggle btn" href="#" role="button" id="customDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Settings</span> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
-
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="customDropdown">
-                        <a class="dropdown-item" data-value="Settings" href="javascript:void(0);">Settings</a>
-                        <a class="dropdown-item" data-value="Mail" href="javascript:void(0);">Mail</a>
-                        <a class="dropdown-item" data-value="Print" href="javascript:void(0);">Print</a>
-                        <a class="dropdown-item" data-value="Download" href="javascript:void(0);">Download</a>
-                        <a class="dropdown-item" data-value="Share" href="javascript:void(0);">Share</a>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </header>
-</div>
-<!--  END NAVBAR  -->
+    function welcomeToSystem(userInfo) {
+        var userName = formatUserName(userInfo);
+        alertify.set('notifier', 'position', 'top-center');
+        alertify.set('notifier', 'delay', 5);
+        alertify.message('<b><spring:message code="welcome" /><br/><span class="text-primary">' + userName +
+            '</span></b>');
+    }
+</script>

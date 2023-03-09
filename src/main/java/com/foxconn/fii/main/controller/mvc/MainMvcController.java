@@ -47,14 +47,6 @@ public class MainMvcController {
         return commonView(model, "application-error", null);
     }
 
-    @RequestMapping(value = "/page-404")
-    public String page404(Model model) {
-        model.addAttribute("path", "page-404");
-        model.addAttribute("title", "Page 404");
-
-        return commonView(model, "application-error", null);
-    }
-
     @RequestMapping("/handle-login-success")
     public void handleLoginSuccess(
             HttpServletRequest request,

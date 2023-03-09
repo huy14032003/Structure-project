@@ -3,7 +3,7 @@
     #page-403 {
         width: 100%;
         height: 100vh;
-        background-color: rgb(238, 197, 197);
+        background-image: url('/sample-system/assets/images/background-home.png');
         background-position: center;
         background-size: cover;
     }
@@ -11,6 +11,9 @@
     .main {
         width: 100%;
         height: 100vh;
+        /* display: flex;
+        align-items: center;
+        justify-content: center; */
     }
 
     p {
@@ -23,7 +26,7 @@
 
     p::before,
     p:after {
-        content: 'ERROR 403';
+        content: '403 ERROR';
         position: absolute;
         top: 0;
         left: 0;
@@ -49,26 +52,32 @@
         }
     }
 </style>
-<div class="d-flex-ccs" id="page-403">
-    <div class="col-md-12 p-4 main d-flex-ccc">
-        <p>ERROR 403</p>
+<div class="d-flex align-items-center justify-content-start flex-column" id="page-403">
+    <div class="col-md-12 p-4 main d-flex align-items-center justify-content-center flex-column">
+        <p>403 ERROR</p>
         <h5 class="alert alert-warning">
             <i class="fa fa-triangle-exclamation"></i>
             <span class="mr-2">
-                You don't have permission access to system
+                <spring:message code="alertNoPermissionOnPage" />
             </span>
-            <button class="btn btn-primary mx-2" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i>
-                Logout
+            <button class="btn btn-primary" onclick="goHome()">
+                <i class="fa fa-home"></i>
+                <spring:message code="backHome" />
             </button>
-            <a type="button" href="/pm-system/assets/files/user_format_po_etac.xlsx" class="btn btn-success mx-2"><i class="fa fa-download"></i> User format</a>
+            <button class="btn btn-primary" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                <spring:message code="logout" />
+            </button>
         </h5>
-        <h5><i class="fa fa-envelope"></i>: <a href="#">cpe-vn-fii-sw@mail.foxconn.com</a></h5>
     </div>
 </div>
 
 <script>
+    function goHome() {
+        window.location.href = "/sample-system/";
+    }
+
     function logout() {
-        window.location.href = "/pm-system/logout";
+        window.location.href = "/sample-system/logout";
     }
 </script>
