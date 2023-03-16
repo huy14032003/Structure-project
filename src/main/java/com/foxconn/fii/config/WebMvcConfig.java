@@ -26,6 +26,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${path.data}")
     private String dataPath;
 
+    @Value("${server.servlet.static-path}")
+    private String staticPath;
+
     @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource= new ReloadableResourceBundleMessageSource();
@@ -36,13 +39,19 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/assets/**", "/ws-data/image/**", "/ws-data/file/**", "/favicon.ico", "/sitemap*.xml")
-                .addResourceLocations("classpath:/static/assets/", ("file:" + dataPath + "image/"), ("file:" + dataPath + "file/"))
-//                .setCacheControl(CacheControl.maxAge(30L, TimeUnit.DAYS).cachePublic())
-//                .resourceChain(true)
-//                .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"))
-//                .addTransformer(new AppCacheManifestTransformer())
-        ;
+        registry.addResourceHandler("/assets/**", "/favicon.ico", "/sitemap*.xml")
+                .addResourceLocations("classpath:/static/assets/")
+                .setCacheControl(CacheControl.maxAge(30L, TimeUnit.DAYS).cachePublic())
+                .resourceChain(true)
+                .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"))
+                .addTransformer(new AppCacheManifestTransformer());
+
+        registry.addResourceHandler(staticPath + "/**")
+                .addResourceLocations("file:" + dataPath)
+                .setCacheControl(CacheControl.maxAge(30L, TimeUnit.DAYS).cachePublic())
+                .resourceChain(true)
+                .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"))
+                .addTransformer(new AppCacheManifestTransformer());
     }
 
     @Override

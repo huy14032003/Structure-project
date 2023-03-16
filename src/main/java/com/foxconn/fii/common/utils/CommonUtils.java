@@ -6,7 +6,7 @@ import lombok.experimental.UtilityClass;
 public class CommonUtils {
 
     public boolean validateEmail(String email) {
-        String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+        String regex = "^[\\w-_/\\.+]*[\\w-_/\\.]\\@([\\w-_\\.]+\\.)+[\\w-_\\.]+[\\w-_\\.]$";
         return email.matches(regex);
     }
 
