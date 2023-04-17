@@ -16,29 +16,31 @@ import org.springframework.stereotype.Service;
 public class NotifyServiceImpl implements NotifyService {
 
     @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
     private AmqpTemplate amqpTemplate;
 
-    @Value("${server.domain}")
-    private String domain;
+    @Autowired
+    private ObjectMapper mapper;
+
+    @Value("${server.domains}")
+    private String[] domains;
 
     @Override
-    public void notifyToMail(MailMessage data, String from, String to) {
+    public boolean notifyToMail(NotifyMessage.NotifyType notifyType, String to, MailMessage message) {
         try {
-            String json = mapper.writeValueAsString(data);
-            String message = mapper.writeValueAsString(NotifyMessage.of(
+            String json = mapper.writeValueAsString(message);
+            String notifyMessage = mapper.writeValueAsString(NotifyMessage.of(
                     NotifyMessage.System.MAIL,
-                    NotifyMessage.Type.TEXT,
+                    NotifyMessage.MessageType.TEXT,
                     ApplicationConstant.APPLICATION_NAME,
-                    from,
+                    notifyType,
+                    "",
                     to,
                     json));
-
-            amqpTemplate.convertAndSend("notify", "", message);
+            amqpTemplate.convertAndSend("notify", "", notifyMessage);
+            return true;
         } catch (Exception e) {
-            log.error("### sendToIcivet error", e);
+            log.error("### notifyToMail error", e);
+            return false;
         }
     }
 

@@ -25,8 +25,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${security.oauth2.logoutUrl}")
     private String logoutUrl;
 
-    @Value("${server.domain}")
-    private String domain;
+    @Value("${server.domains}")
+    private String[] domains;
 
     @Value("${security.oauth2.resource.tokenInfoUri}")
     private String tokenInfoUri;
@@ -90,7 +90,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies("SAMPLE_SSSESSION", "access_token", "refresh_token")
 //                .logoutSuccessUrl("/home")
 //                .logoutSuccessUrl(String.format("%s?redirectUrl=%s", logoutUrl, domain))
-                .logoutSuccessHandler(new CustomLogoutSuccessHandler(domain, oauth2Properties.getLogoutUrl()));
+                .logoutSuccessHandler(new CustomLogoutSuccessHandler(domains, oauth2Properties.getLogoutUrl()));
         ;
 
         http.csrf().disable();
@@ -101,7 +101,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring()
-                .antMatchers("/ws-data/**", "/assets/**", "/templates/**", "/WEB-INF/jsp/**");
+        web.ignoring().antMatchers(
+//                "/**",
+                "/v2/api-docs",
+                "/configuration/ui",
+                "/swagger-resources/**",
+                "/configuration/security",
+                "/swagger-ui.html",
+                "/webjars/**",
+                "/templates/**",
+                "/WEB-INF/jsp/**",
+                "/ws-data/**"
+        );
     }
 }

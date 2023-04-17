@@ -26,7 +26,7 @@
 
     p::before,
     p:after {
-        content: '403 ERROR';
+        content: '403 FORBIDDEN';
         position: absolute;
         top: 0;
         left: 0;
@@ -54,7 +54,7 @@
 </style>
 <div class="d-flex align-items-center justify-content-start flex-column" id="page-403">
     <div class="col-md-12 p-4 main d-flex align-items-center justify-content-center flex-column">
-        <p>403 ERROR</p>
+        <p>FORBIDDEN</p>
         <h5 class="alert alert-warning">
             <i class="fa fa-triangle-exclamation"></i>
             <span class="mr-2">

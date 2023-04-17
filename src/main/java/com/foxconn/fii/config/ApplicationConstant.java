@@ -11,7 +11,7 @@ public class ApplicationConstant {
                     "Thanks and Best regards,</br>" +
                     "<b>-- FII TEAM --</b></br>" +
                     "============================</br>" +
-                    "<b>Ext:</b> 26152</br>" +
+                    "<b>Ext:</b> 33717</br>" +
                     "<b>Email:</b> cpe-vn-fii-sw@mail.foxconn.com";
 
 }

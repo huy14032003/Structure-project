@@ -1,8 +1,10 @@
 package com.foxconn.fii.security.config;
 
+import com.foxconn.fii.common.utils.CookieUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AbstractAuthenticationTargetUrlRequestHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,11 +13,14 @@ import java.io.IOException;
 
 public class CustomLogoutSuccessHandler extends AbstractAuthenticationTargetUrlRequestHandler implements LogoutSuccessHandler {
 
-    private String domain;
+    private String[] domains;
 
-    public CustomLogoutSuccessHandler(String domain, String defaultTargetUrl) {
-        this.domain = domain;
-        this.setDefaultTargetUrl(defaultTargetUrl);
+    private String logoutSuccessUrl;
+
+    public CustomLogoutSuccessHandler(String[] domains, String logoutSuccessUrl) {
+        this.domains = domains;
+        this.logoutSuccessUrl = logoutSuccessUrl;
+        this.setDefaultTargetUrl(logoutSuccessUrl);
     }
 
     @Override
@@ -24,11 +29,27 @@ public class CustomLogoutSuccessHandler extends AbstractAuthenticationTargetUrlR
             HttpServletResponse httpServletResponse,
             Authentication authentication) throws IOException, ServletException {
         String requestUrl = httpServletRequest.getRequestURL().toString();
-        String defaultTargetUrl = this.getDefaultTargetUrl();
-        if (!requestUrl.startsWith(domain)) {
+        String defaultTargetUrl = this.logoutSuccessUrl;
+
+        boolean flag = false;
+        for (String domain : this.domains) {
+            if (requestUrl.startsWith(domain)) {
+                flag = true;
+                break;
+            }
+        }
+
+        if (!flag) {
             defaultTargetUrl = "/sign-in";
-        } else if (!defaultTargetUrl.contains("redirectUrl")) {
-            defaultTargetUrl = defaultTargetUrl + String.format("?redirectUrl=%s", requestUrl.replace("/logout", ""));
+        } else {
+            String redirectUrl = requestUrl.replace(httpServletRequest.getRequestURI(), "");
+            String previousPage = CookieUtils.getValue(httpServletRequest, "previous_page");
+            if (!StringUtils.isEmpty(previousPage)) {
+                redirectUrl = redirectUrl + previousPage;
+            } else {
+                redirectUrl = redirectUrl + httpServletRequest.getContextPath();
+            }
+            defaultTargetUrl = defaultTargetUrl + String.format("?redirectUrl=%s", redirectUrl);
         }
         this.setDefaultTargetUrl(defaultTargetUrl);
         this.handle(httpServletRequest, httpServletResponse, authentication);

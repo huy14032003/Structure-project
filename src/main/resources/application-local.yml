@@ -2,7 +2,8 @@
 server:
   http.port: 8000
   port: 18000
-  domain: http://localhost:8000/sample-system
+  domains: >
+    http://localhost:8000/sample-system
   servlet:
     context-path: /sample-system
     static-path: /ws-data

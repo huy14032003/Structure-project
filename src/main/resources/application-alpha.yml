@@ -2,7 +2,9 @@
 server:
   http.port: 8000
   port: 18000
-  domain: https://10.224.81.70:6443/sample-system
+  domains: >
+    https://10.224.81.70:6443/sample-system,
+    https://fiisw.cnsbg.efoxconn.com:6443/sample-system
   servlet:
     context-path: /sample-system
     static-path: /ws-data

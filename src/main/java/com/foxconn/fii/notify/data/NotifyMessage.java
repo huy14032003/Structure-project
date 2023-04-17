@@ -4,36 +4,30 @@ import lombok.Data;
 
 @Data
 public class NotifyMessage {
+
     private System system;
 
-    private Type type;
+    private MessageType type;
 
     private String source;
+
+    private NotifyType notifyType = NotifyType.NOTICE;
 
     private String from;
 
     private String toUser;
 
-    private Integer toGroup;
-
     private String message;
 
-    public static NotifyMessage of (System system, Type type, String source, String from, String toUser, String message) {
-        return of(system, type, source, from, toUser, null, message);
-    }
 
-    public static NotifyMessage of (System system, Type type, String source, String from, Integer toGroup, String message) {
-        return of(system, type, source, from, null, toGroup, message);
-    }
-
-    public static NotifyMessage of(System system, Type type, String source, String from, String toUser, Integer toGroup, String message) {
+    public static NotifyMessage of(System system, MessageType type, String source, NotifyType notifyType, String from, String toUser, String message) {
         NotifyMessage notifyMessage = new NotifyMessage();
         notifyMessage.setSystem(system);
         notifyMessage.setType(type);
         notifyMessage.setSource(source);
+        notifyMessage.setNotifyType(notifyType);
         notifyMessage.setFrom(from);
         notifyMessage.setToUser(toUser);
-        notifyMessage.setToGroup(toGroup);
         notifyMessage.setMessage(message);
         return notifyMessage;
     }
@@ -46,10 +40,17 @@ public class NotifyMessage {
         FII_VN
     }
 
-    public enum Type {
+    public enum MessageType {
         TEXT,
         IMAGE,
         FILE,
         NEWS
     }
+
+    public enum NotifyType {
+        APPROVAL,
+        NOTICE,
+        HIGHLIGHT
+    }
+
 }
