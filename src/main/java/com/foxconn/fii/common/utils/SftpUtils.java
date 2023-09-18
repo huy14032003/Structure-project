@@ -27,38 +27,6 @@ public class SftpUtils {
         return (ChannelSftp) jschSession.openChannel("sftp");
     }
 
-    public static boolean uploadSftp(ChannelSftp channelSftp, String localFile, String sftpFile) {
-        localFile = localFile.replace("\\\\", "/").replace("\\", "/");
-        sftpFile = sftpFile.replace("\\\\", "/").replace("\\", "/");
-
-        String[] folders = sftpFile.split("/");
-        try {
-            for (String folder : folders) {
-                if (folder.length() > 0) {
-                    try {
-                        channelSftp.cd(folder);
-                    } catch (SftpException e) {
-                        channelSftp.mkdir(folder);
-                        channelSftp.cd(folder);
-                        System.out.println("create folder success------" + folder);
-                    }
-                }
-            }
-        } catch (SftpException sftpException) {
-            System.out.println("uploadSftp--------try create folder");
-            return false;
-        }
-
-        try {
-            channelSftp.put(localFile, sftpFile);
-            System.out.println("Upload Complete");
-        } catch (SftpException e) {
-            System.out.println("Try upload file from SFTP-----------" + e.getMessage());
-            return false;
-        }
-        return true;
-    }
-
     public static boolean downloadSftp(String host, int port, String username, String password, String fileInPath, String fileOutPath) {
         fileInPath = fileInPath.replace("\\\\", "/").replace("\\", "/");
         fileOutPath = fileOutPath.replace("\\\\", "/").replace("\\", "/");

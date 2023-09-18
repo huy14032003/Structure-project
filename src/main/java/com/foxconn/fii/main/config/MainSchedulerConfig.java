@@ -18,17 +18,22 @@ import java.nio.file.Paths;
 @Configuration
 public class MainSchedulerConfig {
 
+    @Value("${path.data}")
+    private String dataPath;
+
+    @Value("${path.temp}")
+    private String tempPath;
+
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
+
+
 //    @Scheduled(cron = "0 0 9 * * THU")
 //    @Scheduled(cron = "0 33 * * * *")
 //    public void sampleFunction() {
 //
 //    }
 
-    @Value("${path.data}")
-    private String dataPath;
-
-    @Value("${path.temp}")
-    private String tempPath;
 
     @Scheduled(cron = "0 0/5 * * * *")
     public void backupMedia() {
@@ -46,7 +51,7 @@ public class MainSchedulerConfig {
 
             channelSftp.exit();
         } catch (Exception e) {
-            log.error("### upload sftp error", e);
+            log.error("### backup media error", e);
         }
     }
 
@@ -57,14 +62,19 @@ public class MainSchedulerConfig {
                 try {
                     String filePath = file.getPath().replace("\\", "/").replace(tempPath, "");
                     if (file.isFile()) {
-                        SftpUtils.uploadSftp(channelSftp, file.getPath(), "/sample-system/" + filePath);
+                        channelSftp.put(file.getPath(), contextPath + "/" + filePath);
                         Files.move(file.toPath(), Paths.get(dataPath + filePath));
                     } else {
+                        try {
+                            channelSftp.stat(contextPath + "/" + filePath);
+                        } catch (Exception e) {
+                            channelSftp.mkdir(contextPath + "/" + filePath);
+                        }
                         Files.createDirectories(Paths.get(dataPath + filePath));
                         backupFiles(channelSftp, file);
                     }
-                } catch (IOException e) {
-                    log.error("### move file from temp to data error", e);
+                } catch (Exception e) {
+                    log.error("### backup files error", e);
                 }
             }
         }
