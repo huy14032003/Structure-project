@@ -4,6 +4,7 @@ public class ApplicationConstant {
 
     public static final String APPLICATION_NAME = "SAMPLE-SYSTEM";
 
+
     public static final String MAIL_HEADER = "Dear user,</br></br>";
 
     public static final String MAIL_FOOTER =
@@ -13,5 +14,14 @@ public class ApplicationConstant {
                     "============================</br>" +
                     "<b>Ext:</b> 33717</br>" +
                     "<b>Email:</b> cpe-vn-fii-sw@mail.foxconn.com";
+
+
+    public static final String SFTP_HOST = "10.224.81.234";
+
+    public static final Integer SFTP_PORT = 24;
+
+    public static final String SFTP_USERNAME = "backup";
+
+    public static final String SFTP_PASSWORD = "Foxconn168!!";
 
 }

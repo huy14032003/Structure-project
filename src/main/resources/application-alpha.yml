@@ -3,14 +3,14 @@ server:
   http.port: 8000
   port: 18000
   domains: >
-    https://10.224.81.70:6443/sample-system,
     https://fiisw.cnsbg.efoxconn.com:6443/sample-system
+    https://10.224.81.70:6443/sample-system,
   servlet:
     context-path: /sample-system
     static-path: /ws-data
     session:
       cookie:
-        name: SAMPLE_SSESSION
+        name: SAMPLE_SESSION
       timeout: 30m
   ssl:
     key-store: D:\tiennd\app\Apache24\conf\ssl\fiisw_cnsbg_efoxconn_com.pfx
@@ -39,12 +39,12 @@ security:
 # db
 spring:
   datasource:
-    url: jdbc:h2:mem:b04;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-#    url: jdbc:sqlserver://10.224.81.145:3000;databaseName=uthing
-#    username: fii
-#    password: Foxconn168!!
-#    hibernate.dialect: org.hibernate.dialect.SQLServer2008Dialect
+#    url: jdbc:h2:mem:b04;DB_CLOSE_DELAY=-1
+#    driver-class-name: org.h2.Driver
+    url: jdbc:sqlserver://10.224.81.145:3000;databaseName=fiistore
+    username: fii
+    password: Foxconn168!!
+    hibernate.dialect: org.hibernate.dialect.SQLServer2008Dialect
     hikari:
       connectionTimeout: 5000
       idleTimeout: 30000
@@ -127,6 +127,7 @@ oracle:
 # uploading
 path:
   data: D:/tiennd/data/project/sample-system/
+  temp: D:/tiennd/temp/project/sample-system/
 
 # logging
 logging:

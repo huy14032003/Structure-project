@@ -25,7 +25,7 @@ public class ExcelUtils {
 
         switch (cell.getCellType()) {
             case STRING:
-                return cell.getStringCellValue().trim();
+                return cell.getStringCellValue().replaceAll(" ", " ").trim();
             case NUMERIC:
                 if (HSSFDateUtil.isCellDateFormatted(cell)) {
                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -12,7 +12,7 @@ public class CommonUtils {
 
     public String getExtension(String filename) {
         if (filename == null) {
-            return null;
+            return "";
         } else {
             int index = filename.lastIndexOf(".");
             return index == -1 ? "" : filename.substring(index + 1);

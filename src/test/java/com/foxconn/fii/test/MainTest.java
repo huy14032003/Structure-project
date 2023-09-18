@@ -1,10 +1,18 @@
 package com.foxconn.fii.test;
 
+import com.foxconn.fii.common.exception.CommonException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+import org.springframework.util.StringUtils;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.Reader;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class MainTest {
@@ -43,4 +51,39 @@ public class MainTest {
         log.info("{}", s);
     }
 
+//    @Test
+    public void readLogTest() throws Exception {
+
+        Reader fileReader = new FileReader("C:\\Users\\V0946495.VNGZ\\Desktop\\httpd-access.2023.04.29.log");
+        try (BufferedReader reader = new BufferedReader(fileReader)) {
+//        try (BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\V0946495\\Desktop\\SD report\\20210113\\ZNM22.xls"))) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setFirstDayOfWeek(Calendar.MONDAY);
+
+            int index = 0;
+            String row;
+            while ((row = reader.readLine()) != null) {
+
+                Pattern pattern = Pattern.compile("(.*) (.*) (.*) (\\[.*\\]) (.*) (.*) (\".*\") (.*) (\".*\") (\".*\") (.*)");
+                Matcher matcher = pattern.matcher(row);
+
+                List<String> cellList = new ArrayList<>();
+                while (matcher.find()) {
+                    for (int i=1; i<=matcher.groupCount(); i++) {
+                        cellList.add(matcher.group(i));
+                    }
+                }
+
+                if (cellList.size() != 11) {
+                    continue;
+                }
+
+                log.debug("### {}", cellList);
+            }
+        } catch (Exception e) {
+            log.error("### process znm22 error", e);
+            throw new CommonException(String.format("process znm22 %s %s", e.getCause(), e.getMessage()));
+        }
+
+    }
 }

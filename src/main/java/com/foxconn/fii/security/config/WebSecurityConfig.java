@@ -31,6 +31,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${security.oauth2.resource.tokenInfoUri}")
     private String tokenInfoUri;
 
+    @Value("${server.servlet.static-path}")
+    private String staticPath;
+
     @Autowired
     private OAuth2Properties oauth2Properties;
 
@@ -61,14 +64,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         String[] securedList = {
-//                "/**",
-                "/"
+                "/**",
+//                "/"
         };
 
         String[] ignoredList = {
-                "/**",
+//                "/**",
                 "/login**",
                 "/sign-in",
+
+                "/greeting",
+                "/api/time/now",
         };
 
         http.antMatcher("/**")
@@ -87,7 +93,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.logout()
                 .invalidateHttpSession(true)
-                .deleteCookies("SAMPLE_SSSESSION", "access_token", "refresh_token")
+                .deleteCookies("SAMPLE_SESSION", "access_token", "refresh_token")
 //                .logoutSuccessUrl("/home")
 //                .logoutSuccessUrl(String.format("%s?redirectUrl=%s", logoutUrl, domain))
                 .logoutSuccessHandler(new CustomLogoutSuccessHandler(domains, oauth2Properties.getLogoutUrl()));
@@ -103,15 +109,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(
 //                "/**",
-                "/v2/api-docs",
-                "/configuration/ui",
-                "/swagger-resources/**",
-                "/configuration/security",
-                "/swagger-ui.html",
+//                "/v2/api-docs",
+//                "/configuration/ui",
+//                "/swagger-resources/**",
+//                "/configuration/security",
+//                "/swagger-ui.html",
                 "/webjars/**",
                 "/templates/**",
                 "/WEB-INF/jsp/**",
-                "/ws-data/**"
+                "/error",
+                "/page-**",
+                staticPath + "/public/**"
         );
     }
 }

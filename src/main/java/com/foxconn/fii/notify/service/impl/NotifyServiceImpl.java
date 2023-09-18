@@ -2,6 +2,7 @@ package com.foxconn.fii.notify.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foxconn.fii.config.ApplicationConstant;
+import com.foxconn.fii.notify.data.IcivetTextMessage;
 import com.foxconn.fii.notify.data.MailMessage;
 import com.foxconn.fii.notify.data.NotifyMessage;
 import com.foxconn.fii.notify.service.NotifyService;
@@ -44,4 +45,23 @@ public class NotifyServiceImpl implements NotifyService {
         }
     }
 
+    @Override
+    public boolean notifyToIcivet(NotifyMessage.NotifyType notifyType, String to, IcivetTextMessage message) {
+        try {
+            String json = mapper.writeValueAsString(message);
+            String notifyMessage = mapper.writeValueAsString(NotifyMessage.of(
+                    NotifyMessage.System.CIVET,
+                    NotifyMessage.MessageType.TEXT,
+                    ApplicationConstant.APPLICATION_NAME,
+                    notifyType,
+                    "",
+                    to,
+                    json));
+            amqpTemplate.convertAndSend("notify", "", notifyMessage);
+            return true;
+        } catch (Exception e) {
+            log.error("### notifyToIcivet error", e);
+            return false;
+        }
+    }
 }

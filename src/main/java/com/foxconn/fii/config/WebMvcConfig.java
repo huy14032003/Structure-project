@@ -12,11 +12,9 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.resource.AppCacheManifestTransformer;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
 
-import javax.annotation.Resource;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -25,6 +23,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Value("${path.data}")
     private String dataPath;
+
+    @Value("${path.temp}")
+    private String tempPath;
 
     @Value("${server.servlet.static-path}")
     private String staticPath;
@@ -37,6 +38,21 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return messageSource;
     }
 
+    @Bean
+    public LocaleResolver localeResolver() {
+//        SessionLocaleResolver slr = new SessionLocaleResolver();
+        AcceptHeaderResolver slr = new AcceptHeaderResolver();
+        slr.setDefaultLocale(Locale.US);
+        return slr;
+    }
+
+    @Bean
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
+        lci.setParamName("lang");
+        return lci;
+    }
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/assets/**", "/favicon.ico", "/sitemap*.xml")
@@ -47,7 +63,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addTransformer(new AppCacheManifestTransformer());
 
         registry.addResourceHandler(staticPath + "/**")
-                .addResourceLocations("file:" + dataPath)
+                .addResourceLocations("file:" + dataPath, "file:" + tempPath)
                 .setCacheControl(CacheControl.maxAge(30L, TimeUnit.DAYS).cachePublic())
                 .resourceChain(true)
                 .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"))
@@ -62,21 +78,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowCredentials(true)
                 .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
                 .allowedHeaders("X-Requested-With", "Content-Category", "Authorization", "Origin", "Accept", "Access-Control-Request-Method", "Access-Control-Request-Headers");
-    }
-
-    @Bean
-    public LocaleResolver localeResolver() {
-//        SessionLocaleResolver slr = new SessionLocaleResolver();
-//        slr.setDefaultLocale(Locale.US);
-//        return slr;
-        return new AcceptHeaderResolver();
-    }
-
-    @Bean
-    public LocaleChangeInterceptor localeChangeInterceptor() {
-        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
-        lci.setParamName("lang");
-        return lci;
     }
 
     @Override
