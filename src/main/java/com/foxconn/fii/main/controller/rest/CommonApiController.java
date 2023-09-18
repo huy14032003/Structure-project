@@ -41,7 +41,7 @@ public class CommonApiController {
 
     @GetMapping("/api/greeting")
     public String greeting(HttpServletRequest request, Locale locale) {
-//        return "Welcome to HR system!\n--- VN FII Team ---";
+//        return "Welcome to SAMPLE-SYSTEM system!\n--- VN FII Team ---";
         return messageSource.getMessage("greeting", null, locale);
     }
 
@@ -51,6 +51,15 @@ public class CommonApiController {
         Calendar calendar = Calendar.getInstance();
         return df.format(calendar.getTime());
     }
+
+    /**
+     * @param fileType |public| ignore security
+     *                 |tmp| removable
+     *                 |file|image|audio|video| file type of file
+     * @param files files
+     * @param originalFlag 1: keep original file name
+     * @return urls
+     */
 
     @PostMapping(value = {"/api/upload/{fileType}"}, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ListResponse<String> uploadFile(
