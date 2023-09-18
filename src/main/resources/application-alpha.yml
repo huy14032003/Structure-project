@@ -124,6 +124,12 @@ oracle:
       connectionTestQuery: SELECT 1 FROM DUAL
       validationTimeout: 5000
 
+sftp:
+  host: 10.224.81.234
+  port: 24
+  username: backup
+  password: Foxconn168!!
+
 # uploading
 path:
   data: D:/tiennd/data/project/sample-system/

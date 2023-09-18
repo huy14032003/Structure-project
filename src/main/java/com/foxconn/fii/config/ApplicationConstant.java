@@ -15,13 +15,4 @@ public class ApplicationConstant {
                     "<b>Ext:</b> 33717</br>" +
                     "<b>Email:</b> cpe-vn-fii-sw@mail.foxconn.com";
 
-
-    public static final String SFTP_HOST = "10.224.81.234";
-
-    public static final Integer SFTP_PORT = 24;
-
-    public static final String SFTP_USERNAME = "backup";
-
-    public static final String SFTP_PASSWORD = "Foxconn168!!";
-
 }

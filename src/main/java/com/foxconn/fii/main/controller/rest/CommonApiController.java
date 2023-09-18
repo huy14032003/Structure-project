@@ -55,7 +55,8 @@ public class CommonApiController {
     @PostMapping(value = {"/api/upload/{fileType}"}, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ListResponse<String> uploadFile(
             @PathVariable String fileType,
-            @RequestPart MultipartFile[] files) {
+            @RequestPart MultipartFile[] files,
+            @RequestAttribute(required = false) Integer originalFlag) {
 
         if (!"|public|tmp|file|image|audio|video|".contains("|" + fileType + "|")) {
             throw CommonException.of("File type {} is not support", fileType);
@@ -80,14 +81,18 @@ public class CommonApiController {
 
         List<String> urlList = new ArrayList<>();
         for (MultipartFile multipartFile : files) {
-            String name = System.currentTimeMillis() + "-" + new Random().nextInt(100);
-            String extension = CommonUtils.getExtension(multipartFile.getOriginalFilename());
-            if (!StringUtils.isEmpty(extension)) {
-                extension = "." + extension;
+            String filename = multipartFile.getOriginalFilename();
+            if (originalFlag == null || originalFlag == 0) {
+                String name = System.currentTimeMillis() + "-" + new Random().nextInt(100);
+                String extension = CommonUtils.getExtension(multipartFile.getOriginalFilename());
+                if (!StringUtils.isEmpty(extension)) {
+                    extension = "." + extension;
+                }
+                filename = name + extension;
             }
 
-            File file = new File(dataPath + subPath + "/" + name + extension);
-            String url = contextPath + staticPath + "/" + subPath + "/" + name + extension;
+            File file = new File(dataPath + subPath + "/" + filename);
+            String url = contextPath + staticPath + "/" + subPath + "/" + filename;
 
             try {
                 multipartFile.transferTo(file);

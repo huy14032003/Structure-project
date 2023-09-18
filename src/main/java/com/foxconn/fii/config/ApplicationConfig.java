@@ -1,5 +1,7 @@
 package com.foxconn.fii.config;
 
+import com.foxconn.fii.common.model.SftpProperties;
+import com.foxconn.fii.security.config.OAuth2Properties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.Connector;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -8,6 +10,7 @@ import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +27,7 @@ import java.security.cert.X509Certificate;
 @Slf4j
 @EnableAsync
 @Configuration
+@EnableConfigurationProperties(SftpProperties.class)
 public class ApplicationConfig {
 
     @Value("${server.http.port}")

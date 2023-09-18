@@ -1,16 +1,15 @@
 package com.foxconn.fii.main.config;
 
+import com.foxconn.fii.common.model.SftpProperties;
 import com.foxconn.fii.common.utils.SftpUtils;
-import com.foxconn.fii.config.ApplicationConstant;
 import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSchException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -27,6 +26,9 @@ public class MainSchedulerConfig {
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
+    @Autowired
+    private SftpProperties sftpProperties;
+
 
 //    @Scheduled(cron = "0 0 9 * * THU")
 //    @Scheduled(cron = "0 33 * * * *")
@@ -39,14 +41,20 @@ public class MainSchedulerConfig {
     public void backupMedia() {
         try {
             ChannelSftp channelSftp = SftpUtils.createChannel(
-                    ApplicationConstant.SFTP_HOST,
-                    ApplicationConstant.SFTP_PORT,
-                    ApplicationConstant.SFTP_USERNAME,
-                    ApplicationConstant.SFTP_PASSWORD);
+                    sftpProperties.getHost(),
+                    sftpProperties.getPort(),
+                    sftpProperties.getUsername(),
+                    sftpProperties.getPassword());
 
             channelSftp.connect();
 
             File tempFolder = new File(tempPath);
+            try {
+                channelSftp.stat(contextPath);
+            } catch (Exception e) {
+                channelSftp.mkdir(contextPath);
+            }
+
             backupFiles(channelSftp, tempFolder);
 
             channelSftp.exit();
