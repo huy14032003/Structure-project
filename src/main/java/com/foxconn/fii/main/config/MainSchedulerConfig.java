@@ -50,9 +50,9 @@ public class MainSchedulerConfig {
 
             File tempFolder = new File(tempPath);
             try {
-                channelSftp.stat(contextPath);
+                channelSftp.stat("/media" + contextPath);
             } catch (Exception e) {
-                channelSftp.mkdir(contextPath);
+                channelSftp.mkdir("/media" + contextPath);
             }
 
             backupFiles(channelSftp, tempFolder);
@@ -70,13 +70,13 @@ public class MainSchedulerConfig {
                 try {
                     String filePath = file.getPath().replace("\\", "/").replace(tempPath, "");
                     if (file.isFile()) {
-                        channelSftp.put(file.getPath(), contextPath + "/" + filePath);
+                        channelSftp.put(file.getPath(), "/media" + contextPath + "/" + filePath);
                         Files.move(file.toPath(), Paths.get(dataPath + filePath));
                     } else {
                         try {
-                            channelSftp.stat(contextPath + "/" + filePath);
+                            channelSftp.stat("/media" + contextPath + "/" + filePath);
                         } catch (Exception e) {
-                            channelSftp.mkdir(contextPath + "/" + filePath);
+                            channelSftp.mkdir("/media" + contextPath + "/" + filePath);
                         }
                         Files.createDirectories(Paths.get(dataPath + filePath));
                         backupFiles(channelSftp, file);
