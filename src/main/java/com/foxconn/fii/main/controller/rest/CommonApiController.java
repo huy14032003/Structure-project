@@ -29,8 +29,11 @@ public class CommonApiController {
     @Autowired
     private MessageSource messageSource;
 
-    @Value("${path.data}")
-    private String dataPath;
+//    @Value("${path.data}")
+//    private String dataPath;
+
+    @Value("${path.temp}")
+    private String tempPath;
 
     @Value("${server.servlet.context-path}")
     private String contextPath;
@@ -81,7 +84,7 @@ public class CommonApiController {
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
         String subPath = fileType + "/" + year + "/" + month + "/" + day;
-        Path folderPath = Paths.get(dataPath + subPath);
+        Path folderPath = Paths.get(tempPath + subPath);
         try {
             Files.createDirectories(folderPath);
         } catch (Exception e) {
@@ -100,7 +103,7 @@ public class CommonApiController {
                 filename = name + extension;
             }
 
-            File file = new File(dataPath + subPath + "/" + filename);
+            File file = new File(tempPath + subPath + "/" + filename);
             String url = contextPath + staticPath + "/" + subPath + "/" + filename;
 
             try {

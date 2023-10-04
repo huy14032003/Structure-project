@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 
 @Slf4j
 @Configuration
@@ -37,8 +38,9 @@ public class MainSchedulerConfig {
 //    }
 
 
-    @Scheduled(cron = "0 0/5 * * * *")
+    @Scheduled(cron = "0 0/15 * * * *")
     public void backupMedia() {
+        log.info("### backup media START");
         try {
             ChannelSftp channelSftp = SftpUtils.createChannel(
                     sftpProperties.getHost(),
@@ -61,6 +63,7 @@ public class MainSchedulerConfig {
         } catch (Exception e) {
             log.error("### backup media error", e);
         }
+        log.info("### backup media END");
     }
 
     private void backupFiles(ChannelSftp channelSftp, File path) {
@@ -68,10 +71,19 @@ public class MainSchedulerConfig {
         if (files != null) {
             for (File file : files) {
                 try {
+                    FileTime creationTime = (FileTime) Files.getAttribute(file.toPath(), "creationTime");
+                    if (System.currentTimeMillis() - 5 * 60 * 1000 < creationTime.toMillis()) {
+                        continue;
+                    }
+
                     String filePath = file.getPath().replace("\\", "/").replace(tempPath, "");
                     if (file.isFile()) {
                         channelSftp.put(file.getPath(), "/media" + contextPath + "/" + filePath);
-                        Files.move(file.toPath(), Paths.get(dataPath + filePath));
+                        try {
+                            Files.move(file.toPath(), Paths.get(dataPath + filePath));
+                        } catch (Exception e) {
+                            Files.move(file.toPath(), Paths.get(dataPath + filePath + ".err"));
+                        }
                     } else {
                         try {
                             channelSftp.stat("/media" + contextPath + "/" + filePath);
