@@ -70,6 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         String[] ignoredList = {
 //                "/**",
+                "/",
                 "/login**",
                 "/sign-in",
 
@@ -79,8 +80,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.antMatcher("/**")
                 .authorizeRequests()
-                .antMatchers(ignoredList)
-                .permitAll()
+                .antMatchers(ignoredList).permitAll()
 //                .antMatchers(securedPageList)
 //                .hasRole("WS_USER")
 //                .antMatchers(securedEndpointList)

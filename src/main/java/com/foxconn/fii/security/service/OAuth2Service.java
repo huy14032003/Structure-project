@@ -3,7 +3,6 @@ package com.foxconn.fii.security.service;
 import com.foxconn.fii.security.model.JwtTokenResponse;
 import com.foxconn.fii.security.model.OAuth2User;
 import com.foxconn.fii.security.model.UserContext;
-import org.springframework.security.core.userdetails.UserDetails;
 
 public interface OAuth2Service {
 
@@ -11,7 +10,7 @@ public interface OAuth2Service {
 
     OAuth2User getCurrentUser();
 
-    JwtTokenResponse getToken(String username, String password, String uuid);
+    JwtTokenResponse getToken(String username, String password, String mfaType, String mfaValue, String uuid);
 
     OAuth2User getCurrentUserInformation();
 

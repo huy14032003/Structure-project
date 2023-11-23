@@ -6,8 +6,8 @@ import com.foxconn.fii.common.exception.CommonException;
 import com.foxconn.fii.common.response.CommonResponse;
 import com.foxconn.fii.security.config.OAuth2Principal;
 import com.foxconn.fii.security.config.OAuth2Properties;
-import com.foxconn.fii.security.jwt.model.token.RawToken;
 import com.foxconn.fii.security.jwt.model.token.JwtAuthenticationToken;
+import com.foxconn.fii.security.jwt.model.token.RawToken;
 import com.foxconn.fii.security.model.JwtTokenResponse;
 import com.foxconn.fii.security.model.OAuth2User;
 import com.foxconn.fii.security.model.UserContext;
@@ -131,7 +131,7 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     }
 
     @Override
-    public JwtTokenResponse getToken(String username, String password, String uuid) {
+    public JwtTokenResponse getToken(String username, String password, String mfaType, String mfaValue, String uuid) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         String authorization = Base64.getEncoder().encodeToString(
@@ -142,6 +142,8 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         map.add("username", username);
         map.add("password", password);
         map.add("grant_type", "password");
+        map.add("mfa_type", mfaType);
+        map.add("mfa_value", mfaValue);
         map.add("mac", uuid);
 
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
