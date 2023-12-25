@@ -7,6 +7,7 @@ import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -92,9 +93,12 @@ public class ExcelUtils {
                     return cell.getNumericCellValue();
                 case STRING:
                     try {
-                        return Double.parseDouble(cell.getStringCellValue());
+                        if (StringUtils.isEmpty(cell.getStringCellValue().trim())) {
+                            return 0D;
+                        }
+                        return Double.parseDouble(cell.getStringCellValue().trim());
                     } catch (Exception e) {
-                        throw CommonException.of("Cell {} is invalid format double number", cell.getAddress());
+                        throw CommonException.of("Cell {}-{} is invalid format double number", cell.getAddress(), cell.getStringCellValue());
                     }
                 case BLANK:
                     return 0d;
@@ -113,9 +117,12 @@ public class ExcelUtils {
                 return (int)cell.getNumericCellValue();
             case STRING:
                 try {
-                    return Integer.parseInt(cell.getStringCellValue());
+                    if (StringUtils.isEmpty(cell.getStringCellValue().trim())) {
+                        return 0;
+                    }
+                    return Integer.parseInt(cell.getStringCellValue().trim());
                 } catch (Exception e) {
-                    throw CommonException.of("Cell {} is invalid format int number", cell.getAddress());
+                    throw CommonException.of("Cell {}-{} is invalid format int number", cell.getAddress(), cell.getStringCellValue());
                 }
             case BLANK:
                 return 0;
@@ -136,10 +143,13 @@ public class ExcelUtils {
                 return cell.getNumericCellValue();
             case STRING:
                 try {
-                    return DateUtil.getExcelDate(df.parse(cell.getStringCellValue()));
+                    if (StringUtils.isEmpty(cell.getStringCellValue().trim())) {
+                        return null;
+                    }
+                    return DateUtil.getExcelDate(df.parse(cell.getStringCellValue().trim()));
                 } catch (ParseException e) {
                     log.error("### getDateValue format error {}", cell.getStringCellValue());
-                    throw CommonException.of("Cell {} is invalid format date {}", cell.getAddress(), pattern);
+                    throw CommonException.of("Cell {}-{} is invalid format date {}", cell.getAddress(), cell.getStringCellValue(), pattern);
                 }
             case BLANK:
                 return null;
@@ -157,16 +167,19 @@ public class ExcelUtils {
             case NUMERIC:
                 return DateUtil.getJavaDate(cell.getNumericCellValue());
             case STRING:
+                if (StringUtils.isEmpty(cell.getStringCellValue().trim())) {
+                    return null;
+                }
                 for (String pattern : patterns) {
                     try {
                         SimpleDateFormat df = new SimpleDateFormat(pattern);
                         df.setLenient(false);
-                        return df.parse(cell.getStringCellValue());
+                        return df.parse(cell.getStringCellValue().trim());
                     } catch (ParseException ignored) {}
                 }
 
                 log.error("### getDateValue format error {}", cell.getStringCellValue());
-                throw CommonException.of("Cell {} is invalid format date {}", cell.getAddress(), Arrays.toString(patterns));
+                throw CommonException.of("Cell {}-{} is invalid format date {}", cell.getAddress(), cell.getStringCellValue(), Arrays.toString(patterns));
             case BLANK:
                 return null;
             default:

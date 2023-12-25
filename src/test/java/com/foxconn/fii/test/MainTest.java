@@ -2,22 +2,21 @@ package com.foxconn.fii.test;
 
 import com.foxconn.fii.common.exception.CommonException;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
-import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.Reader;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
 public class MainTest {
 
-    @Test
+//    @Test
     public void mainTest() {
 //        StringBuilder sb = new StringBuilder("exxx");
 //        sb.append("1");
@@ -86,4 +85,55 @@ public class MainTest {
         }
 
     }
+
+//    @Test
+//    public void seleniumEdge() {
+////        System.setProperty("webdriver.gecko.driver","C:\\geckodriver.exe");
+////        WebDriver driver = new FirefoxDriver();
+//
+//        //comment the above 2 lines and uncomment below 2 lines to use Chrome
+//        EdgeOptions options = new EdgeOptions();
+////        Map<String, Object> chromeOptionMap = new HashMap<>();
+////        chromeOptionMap.put("plugins.plugins_disabled", new String[] {"Chrome PDF Viewer"});
+//
+////        options.addArguments("--headless");
+////        options.addArguments("--disable-gpu");
+////        options.addArguments("--print-to-pdf");
+////        options
+//
+//        // setting headless mode to true.. so there isn't any ui
+////        options.setHeadless(true);
+//
+//        System.setProperty("webdriver.edge.driver", "D:\\tiennd\\msedgedriver.exe");
+////        options.setBinary("")
+//        WebDriver driver = new EdgeDriver(options);
+//
+//        String baseUrl = "https://fiisw.cnsbg.efoxconn.com:6443/";
+//        String expectedTitle = "Welcome: Mercury Tours";
+//        String actualTitle = "";
+//
+//        // launch Fire fox and direct it to the Base URL
+//        driver.get(baseUrl);
+//
+////        driver.findElement(By.cssSelector("input[name='userName']")).sendKeys("hello");
+////        driver.findElement(By.cssSelector("input[name='password']")).sendKeys("world");
+////        Select selectbox = new Select(driver.findElement(By.name("country")));
+////        selectbox.selectByVisibleText("ANTARCTICA");
+//
+//        // get the actual value of the title
+//        actualTitle = driver.getTitle();
+//
+//        /*
+//         * compare the actual title of the page with the expected one and print
+//         * the result as "Passed" or "Failed"
+//         */
+//        if (actualTitle.contentEquals(expectedTitle)){
+//            System.out.println("Test Passed!");
+//        } else {
+//            System.out.println("Test Failed");
+//        }
+//
+//        //close Fire fox
+//        driver.close();
+//    }
 }

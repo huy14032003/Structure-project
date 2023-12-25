@@ -1,49 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<property name="FILE_LOG_PATTERN" value="%date [%thread] %-5level %logger{100} %line - %msg%n" />
+    <property name="FILE_LOG_PATTERN" value="%date [%thread] %-5level %logger{100} %line - %msg%n"/>
 
-	<!--<property name="LOG_PATH" value="logs/ws" scope="CONTEXT" />-->
+    <!--<property name="LOG_PATH" value="logs/sample-system" scope="CONTEXT" />-->
 
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<Pattern>${FILE_LOG_PATTERN}</Pattern>
-		</encoder>
-	</appender>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>${FILE_LOG_PATTERN}</Pattern>
+        </encoder>
+    </appender>
 
-	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${LOG_PATH}/catalina.log</file>
-		<encoder>
-			<Pattern>${FILE_LOG_PATTERN}</Pattern>
-		</encoder>
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${LOG_PATH}/catalina.%d{yyyy-MM-dd}.log</fileNamePattern>
-			<maxHistory>30</maxHistory>
-		</rollingPolicy>
-	</appender>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/catalina.log</file>
+        <encoder>
+            <Pattern>${FILE_LOG_PATTERN}</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/catalina.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
 
-	<appender name="FILE_ERROR"
-			  class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<filter class="ch.qos.logback.classic.filter.LevelFilter">
-			<level>WARN</level>
-			<onMatch>ACCEPT</onMatch>
-			<onMismatch>DENY</onMismatch>
-		</filter>
-		<file>${LOG_PATH}/error.log</file>
-		<encoder>
-			<Pattern>${FILE_LOG_PATTERN}</Pattern>
-		</encoder>
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${LOG_PATH}/error.%d{yyyy-MM-dd}.log
-			</fileNamePattern>
-			<maxHistory>30</maxHistory>
-		</rollingPolicy>
-	</appender>
+    <appender name="FILE_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <file>${LOG_PATH}/error.log</file>
+        <encoder>
+            <Pattern>${FILE_LOG_PATTERN}</Pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
 
-	<root level="INFO">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
-		<appender-ref ref="FILE_ERROR"/>
-	</root>
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="FILE_INFO"/>
+    </root>
 
 </configuration>

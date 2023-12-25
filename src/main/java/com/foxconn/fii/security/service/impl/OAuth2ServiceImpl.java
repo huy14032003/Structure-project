@@ -107,7 +107,8 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         } else if (authentication instanceof JwtAuthenticationToken) {
             JwtAuthenticationToken principal = (JwtAuthenticationToken) authentication;
             if (principal.getPrincipal() != null) {
-                String username = ((UserContext) principal.getPrincipal()).getUsername();
+//                String username = ((UserContext) principal.getPrincipal()).getUsername();
+                String username = (String) principal.getPrincipal();
 
                 OAuth2User oauth2User = getCurrentUserInformation();
 
