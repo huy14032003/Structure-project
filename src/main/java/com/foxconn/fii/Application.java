@@ -135,7 +135,9 @@ public class Application extends SpringBootServletInitializer implements Command
 
 //        mainSchedulerConfig.backupMedia();
 
-        log.info("### RUN OK");
+
+
+        log.info("###   RUN OK");
     }
 
 }
