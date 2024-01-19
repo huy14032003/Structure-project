@@ -31,9 +31,11 @@ security:
       userAuthorizationUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/authorize
       clientAuthenticationScheme: header
     resource:
-      userInfoUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/api/user/information
-      userChangePassUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/api/user/change-password
       tokenInfoUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/check_token
+      userDetailsUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/user/details
+      userInfoUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/user/current
+      userChangePassUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/user/change-password
+      userSearchUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/user/information
     logoutUrl: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/logout
 
 # db

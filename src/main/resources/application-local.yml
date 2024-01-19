@@ -37,14 +37,16 @@ security:
    client:
      clientId: ws-system
      clientSecret: Foxconn168!!
-     accessTokenUri: https://10.224.81.70:6443/oauth-service/oauth/token
-     userAuthorizationUri: https://10.224.81.70:6443/oauth-service/oauth/authorize
+     accessTokenUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/token
+     userAuthorizationUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/authorize
      clientAuthenticationScheme: header
    resource:
-     userInfoUri: https://10.224.81.70:6443/oauth-service/api/user/information
-     userChangePassUri: https://10.224.81.70:6443/oauth-service/api/user/change-password
-     tokenInfoUri: https://10.224.81.70:6443/oauth-service/oauth/check_token
-   logoutUrl: https://10.224.81.70:6443/oauth-service/logout
+     tokenInfoUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/check_token
+     userDetailsUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/user/details
+     userInfoUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/user/current
+     userChangePassUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/user/change-password
+     userSearchUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/user/information
+   logoutUrl: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/logout
 
 # db
 spring:

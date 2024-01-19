@@ -47,8 +47,46 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     @Autowired
     private ObjectMapper objectMapper;
 
+
     @Override
-    public UserContext getUserInformation(String username) {
+    public JwtTokenResponse getClientCredentialsToken() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        String authorization = Base64.getEncoder().encodeToString(
+                String.format("%s:%s", oauth2Properties.getClient().getClientId(), oauth2Properties.getClient().getClientSecret()).getBytes());
+        headers.add(AUTHENTICATION_HEADER_NAME, BASIC_TOKEN_PREFIX + authorization);
+
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("grant_type", "client_credentials");
+
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
+
+        ResponseEntity<JwtTokenResponse> responseEntity;
+        try {
+            responseEntity = restTemplate.exchange(oauth2Properties.getClient().getAccessTokenUri(), HttpMethod.POST, entity, new ParameterizedTypeReference<JwtTokenResponse>() {});
+        } catch (RestClientException e) {
+            log.error("### get token error", e);
+            try {
+                HttpClientErrorException httpException = (HttpClientErrorException) e;
+                Map<String, Object> responseBody = objectMapper.readValue(httpException.getResponseBodyAsString(), new TypeReference<Map<String, Object>>() {
+                });
+                throw new CommonException((String) responseBody.getOrDefault("error_description", responseBody.getOrDefault("message", "Username or password invalid")));
+            } catch (CommonException ce) {
+                throw ce;
+            } catch (Exception ce) {
+                throw new CommonException("Username or password invalid");
+            }
+        }
+
+        if (!responseEntity.getStatusCode().is2xxSuccessful() || responseEntity.getBody() == null) {
+            throw new CommonException("Username or password invalid");
+        }
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public JwtTokenResponse getAccessToken(String username, String password, String mfaType, String mfaValue, String uuid) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         String authorization = Base64.getEncoder().encodeToString(
@@ -57,12 +95,89 @@ public class OAuth2ServiceImpl implements OAuth2Service {
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("username", username);
+        map.add("password", password);
+        map.add("grant_type", "password");
+        map.add("mfa_type", mfaType);
+        map.add("mfa_value", mfaValue);
+        map.add("mac", uuid);
 
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
 
+        ResponseEntity<JwtTokenResponse> responseEntity;
+        try {
+            responseEntity = restTemplate.exchange(oauth2Properties.getClient().getAccessTokenUri(), HttpMethod.POST, entity, new ParameterizedTypeReference<JwtTokenResponse>() {});
+        } catch (RestClientException e) {
+            log.error("### get token error", e);
+            try {
+                HttpClientErrorException httpException = (HttpClientErrorException) e;
+                Map<String, Object> responseBody = objectMapper.readValue(httpException.getResponseBodyAsString(), new TypeReference<Map<String, Object>>() {
+                });
+                throw new CommonException((String) responseBody.getOrDefault("error_description", responseBody.getOrDefault("message", "Username or password invalid")));
+            } catch (CommonException ce) {
+                throw ce;
+            } catch (Exception ce) {
+                throw new CommonException("Username or password invalid");
+            }
+        }
+
+        if (!responseEntity.getStatusCode().is2xxSuccessful() || responseEntity.getBody() == null) {
+            throw new CommonException("Username or password invalid");
+        }
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public UserContext getUserDetails(String username) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        String clientCredentialsToken = getClientCredentialsToken().getAccessToken();
+        headers.add(AUTHENTICATION_HEADER_NAME, BEARER_TOKEN_PREFIX + clientCredentialsToken);
+
+        HttpEntity<Object> entity = new HttpEntity<>(headers);
+
         ResponseEntity<CommonResponse<UserContext>> responseEntity;
         try {
-            responseEntity = restTemplate.exchange(oauth2Properties.getResource().getNormalUserInfoUri(), HttpMethod.POST, entity, new ParameterizedTypeReference<CommonResponse<UserContext>>() {});
+            UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
+                    .fromHttpUrl(oauth2Properties.getResource().getUserDetailsUri())
+                    .queryParam("username", username);
+            responseEntity = restTemplate.exchange(uriComponentsBuilder.toUriString(), HttpMethod.GET, entity, new ParameterizedTypeReference<CommonResponse<UserContext>>() {});
+        } catch (RestClientException e) {
+            log.error("### get token error", e);
+            try {
+                HttpClientErrorException httpException = (HttpClientErrorException) e;
+                Map<String, Object> responseBody = objectMapper.readValue(httpException.getResponseBodyAsString(), new TypeReference<Map<String, Object>>() {
+                });
+                throw new CommonException((String) responseBody.getOrDefault("error_description", responseBody.getOrDefault("message", "Username or password invalid")));
+            } catch (CommonException ce) {
+                throw ce;
+            } catch (Exception ce) {
+                throw new CommonException("Username or password invalid");
+            }
+        }
+
+        if (!responseEntity.getStatusCode().is2xxSuccessful() || responseEntity.getBody() == null) {
+            throw new CommonException("Username or password invalid");
+        }
+
+        return responseEntity.getBody().getResult();
+    }
+
+    @Override
+    public OAuth2User searchUserInformation(String username) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        String clientCredentialsToken = getClientCredentialsToken().getAccessToken();
+        headers.add(AUTHENTICATION_HEADER_NAME, BEARER_TOKEN_PREFIX + clientCredentialsToken);
+
+        HttpEntity<Object> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<CommonResponse<OAuth2User>> responseEntity;
+        try {
+            UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
+                    .fromHttpUrl(oauth2Properties.getResource().getUserSearchUri())
+                    .queryParam("username", username);
+            responseEntity = restTemplate.exchange(uriComponentsBuilder.toUriString(), HttpMethod.GET, entity, new ParameterizedTypeReference<CommonResponse<OAuth2User>>() {});
         } catch (RestClientException e) {
             log.error("### get token error", e);
             try {
@@ -129,48 +244,6 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         }
 
         throw CommonException.of("Get current user not supported {}", authentication);
-    }
-
-    @Override
-    public JwtTokenResponse getToken(String username, String password, String mfaType, String mfaValue, String uuid) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        String authorization = Base64.getEncoder().encodeToString(
-                String.format("%s:%s", oauth2Properties.getClient().getClientId(), oauth2Properties.getClient().getClientSecret()).getBytes());
-        headers.add(AUTHENTICATION_HEADER_NAME, BASIC_TOKEN_PREFIX + authorization);
-
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("username", username);
-        map.add("password", password);
-        map.add("grant_type", "password");
-        map.add("mfa_type", mfaType);
-        map.add("mfa_value", mfaValue);
-        map.add("mac", uuid);
-
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(map, headers);
-
-        ResponseEntity<JwtTokenResponse> responseEntity;
-        try {
-            responseEntity = restTemplate.exchange(oauth2Properties.getClient().getAccessTokenUri(), HttpMethod.POST, entity, new ParameterizedTypeReference<JwtTokenResponse>() {});
-        } catch (RestClientException e) {
-            log.error("### get token error", e);
-            try {
-                HttpClientErrorException httpException = (HttpClientErrorException) e;
-                Map<String, Object> responseBody = objectMapper.readValue(httpException.getResponseBodyAsString(), new TypeReference<Map<String, Object>>() {
-                });
-                throw new CommonException((String) responseBody.getOrDefault("error_description", responseBody.getOrDefault("message", "Username or password invalid")));
-            } catch (CommonException ce) {
-                throw ce;
-            } catch (Exception ce) {
-                throw new CommonException("Username or password invalid");
-            }
-        }
-
-        if (!responseEntity.getStatusCode().is2xxSuccessful() || responseEntity.getBody() == null) {
-            throw new CommonException("Username or password invalid");
-        }
-
-        return responseEntity.getBody();
     }
 
     @Override

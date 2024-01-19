@@ -30,12 +30,14 @@ public class OAuth2Properties {
     @Data
     public static class ResourceProperties {
 
+        private String tokenInfoUri;
+
+        private String userDetailsUri;
+
+        private String userSearchUri;
+
         private String userInfoUri;
 
         private String userChangePassUri;
-
-        private String tokenInfoUri;
-
-        private String normalUserInfoUri;
     }
 }

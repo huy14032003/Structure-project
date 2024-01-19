@@ -22,17 +22,13 @@ public class UserContext {
 
     protected String username;
 
+    protected OAuth2User user;
+
     @JsonDeserialize(converter = GrantedAuthorityConverter.class)
     protected List<GrantedAuthority> authorities;
 
-    public static UserContext of(String username, List<GrantedAuthority> authorities) {
-        UserContext userContext = new UserContext() {};
-        userContext.setUsername(username);
-        userContext.setAuthorities(authorities);
-        return userContext;
-    }
 
-    public static UserContext of(String username, List<GrantedAuthority> authorities, String qbloxToken) {
+    public static UserContext of(String username, List<GrantedAuthority> authorities) {
         UserContext userContext = new UserContext() {};
         userContext.setUsername(username);
         userContext.setAuthorities(authorities);

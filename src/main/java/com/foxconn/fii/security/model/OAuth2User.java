@@ -2,14 +2,11 @@ package com.foxconn.fii.security.model;
 
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 public class OAuth2User {
 
-    private Integer id;
-
     private String username;
+
 
     private String name;
 
@@ -17,21 +14,12 @@ public class OAuth2User {
 
     private String email;
 
-    private String bu;
-
-    private String cft;
-
-    private String factory;
-
-    private String department;
+    private String avatar;
 
     private String title;
 
-    private String level;
+    private Integer level;
 
-    private Date pwdExpiredTime;
-
-    private String cardId;
 
     private String ouCode;
 
@@ -39,13 +27,34 @@ public class OAuth2User {
 
     private String upperOuCode;
 
+    private String lowerOuCode;
+
+
+    private String area;
+
+    private String subArea;
+
+    private String factory;
+
+    private String floor;
+
+
+    private String businessGroup;
+
+    private String legalPerson;
+
+    private String bu;
+
+    private String cft;
+
+    private String department;
+
+
     private String allManagers;
 
     private String siteAllManagers;
 
-    private String buALlManagers;
+    private String buAllManagers;
 
-    private Date hireDate;
-
-    private Date leaveDate;
+    private String assistant;
 }

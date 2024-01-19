@@ -6,11 +6,15 @@ import com.foxconn.fii.security.model.UserContext;
 
 public interface OAuth2Service {
 
-    UserContext getUserInformation(String username);
+    JwtTokenResponse getClientCredentialsToken();
+
+    JwtTokenResponse getAccessToken(String username, String password, String mfaType, String mfaValue, String uuid);
+
+    UserContext getUserDetails(String username);
+
+    OAuth2User searchUserInformation(String username);
 
     OAuth2User getCurrentUser();
-
-    JwtTokenResponse getToken(String username, String password, String mfaType, String mfaValue, String uuid);
 
     OAuth2User getCurrentUserInformation();
 
