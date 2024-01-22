@@ -126,6 +126,7 @@ oracle:
       connectionTestQuery: SELECT 1 FROM DUAL
       validationTimeout: 5000
 
+# backup
 sftp:
   host: 10.224.81.234
   port: 24
