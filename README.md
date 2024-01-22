@@ -1,8 +1,26 @@
 # SAMPLE SYSTEM Project for create new project
 
 # 1. Configuration for new project
-#### 1.1 Change name of project
-##### 1.1.1 In pom.xml
+#### 1.1 Create and clone `new-project`
+Create `new-project` on git and clone it 
+```
+git clone https://fiisw.cnsbg.efoxconn.com:6443/git/new-project.git
+```
+
+#### 1.2 Add remote `sample-system`
+Add remote `sample-system` and merge into current. 
+
+If occurred error 
+```
+Could Not Merge sample-system/master: refusing to merge unrelated histories
+``` 
+please run command on terminal
+```
+git pull sample-system master --allow-unrelated-histories
+```
+
+#### 1.3 Change name of project
+##### 1.3.1 In pom.xml
 Change project name
 ```
 <groupId>com.foxconn.fii</groupId>
@@ -13,7 +31,7 @@ Change project name
 <name>sample-system</name>
 ```
 
-##### 1.1.2 In application-*.yml
+##### 1.3.2 In application-*.yml
 Change port, context-path, domain, logging, etc...
 ```
 server:
@@ -39,7 +57,7 @@ logging:
 
 ```
 
-##### 1.1.2 In com.foxconn.fii.config.ApplicationConstant.java
+##### 1.3.2 In com.foxconn.fii.config.ApplicationConstant.java
 Change project name for notify source 
 ```
 public static final String APPLICATION_NAME = "SAMPLE-SYSTEM";
