@@ -1,4 +1,4 @@
-package com.foxconn.fii.common;
+package com.foxconn.fii.common.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -14,11 +14,11 @@ import java.util.List;
 
 @Slf4j
 @Converter
-public class ListColumnConverter implements AttributeConverter<List<String>, String> {
+public class ListObjectColumnConverter<T> implements AttributeConverter<List<T>, String> {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public String convertToDatabaseColumn(List<String> stringObject) {
+    public String convertToDatabaseColumn(List<T> stringObject) {
         if (stringObject == null || stringObject.isEmpty()) {
             return "[]";
         }
@@ -32,13 +32,13 @@ public class ListColumnConverter implements AttributeConverter<List<String>, Str
     }
 
     @Override
-    public List<String> convertToEntityAttribute(String s) {
+    public List<T> convertToEntityAttribute(String s) {
         if (StringUtils.isEmpty(s)) {
             return new ArrayList<>();
         }
 
         try {
-            return mapper.readValue(s, new TypeReference<List<String>>(){});
+            return mapper.readValue(s, new TypeReference<List<T>>(){});
         } catch (IOException e) {
             log.error("### convertToEntityAttribute", e);
             return new ArrayList<>();

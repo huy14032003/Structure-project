@@ -1,4 +1,4 @@
-package com.foxconn.fii.main.data;
+package com.foxconn.fii.common.model;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.foxconn.fii.common;
+package com.foxconn.fii.common.model;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

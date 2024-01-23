@@ -1,4 +1,4 @@
-package com.foxconn.fii.common;
+package com.foxconn.fii.common.model;
 
 public enum ShiftType {
     DAY,
