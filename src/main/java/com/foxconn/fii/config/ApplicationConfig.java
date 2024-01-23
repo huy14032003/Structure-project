@@ -1,7 +1,5 @@
 package com.foxconn.fii.config;
 
-import com.foxconn.fii.common.model.SftpProperties;
-import com.foxconn.fii.security.config.OAuth2Properties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.Connector;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;

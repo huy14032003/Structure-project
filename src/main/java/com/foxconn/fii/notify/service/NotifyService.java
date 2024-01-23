@@ -9,4 +9,6 @@ public interface NotifyService {
     boolean notifyToMail(NotifyMessage.NotifyType notifyType, String to, MailMessage message);
 
     boolean notifyToIcivet(NotifyMessage.NotifyType notifyType, String to, IcivetTextMessage message);
+
+    boolean getSendMailPermission(String empNo);
 }

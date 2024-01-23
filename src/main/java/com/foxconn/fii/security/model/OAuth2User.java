@@ -57,4 +57,8 @@ public class OAuth2User {
     private String buAllManagers;
 
     private String assistant;
+
+    private String agent;
+
+    private boolean agentFlag;
 }

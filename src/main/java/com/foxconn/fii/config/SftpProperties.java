@@ -1,4 +1,4 @@
-package com.foxconn.fii.common.model;
+package com.foxconn.fii.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

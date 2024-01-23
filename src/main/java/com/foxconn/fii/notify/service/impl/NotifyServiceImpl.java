@@ -10,11 +10,26 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.*;
+
+import static com.foxconn.fii.config.ApplicationConstant.APPLICATION_NAME_HRM;
 
 @Slf4j
 @Service
 public class NotifyServiceImpl implements NotifyService {
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Autowired
     private AmqpTemplate amqpTemplate;
@@ -63,5 +78,42 @@ public class NotifyServiceImpl implements NotifyService {
             log.error("### notifyToIcivet error", e);
             return false;
         }
+    }
+
+
+    @Override
+    public boolean getSendMailPermission(String empNo) {
+        if (StringUtils.isEmpty(APPLICATION_NAME_HRM)) {
+            return true;
+        }
+
+        String url = "https://hrm.cns.myfiinet.com:8019/jx_api/api/EmailReminder/GetPersonalSetting";
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("keywords", empNo);
+
+        ResponseEntity<Map<String, Object>> responseEntity;
+        boolean flag = false;
+        try {
+            responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, HttpEntity.EMPTY, new ParameterizedTypeReference<Map<String, Object>>() {});
+            if (responseEntity.getStatusCode().is2xxSuccessful() && responseEntity.getBody() != null) {
+                List<Map<String, Object>> data = (List<Map<String, Object>>) responseEntity.getBody().getOrDefault("Data", new ArrayList<>());
+                for (Map<String, Object> system : data) {
+                    if (APPLICATION_NAME_HRM.equalsIgnoreCase((String) system.getOrDefault("sysName", ""))) {
+                        List<Map<String, Object>> moduleList = (List<Map<String, Object>>) system.getOrDefault("sysModule", new ArrayList<>());
+                        for (Map<String, Object> module : moduleList) {
+                            if (APPLICATION_NAME_HRM.equalsIgnoreCase((String) module.getOrDefault("moduleName", ""))) {
+                                flag = "Y".equalsIgnoreCase((String) module.getOrDefault("isOpen", ""));
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("### error", e);
+        }
+
+        return flag;
     }
 }

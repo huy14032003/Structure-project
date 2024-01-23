@@ -4,6 +4,8 @@ public class ApplicationConstant {
 
     public static final String APPLICATION_NAME = "SAMPLE-SYSTEM";
 
+    public static final String APPLICATION_NAME_HRM = "";
+
 
     public static final String MAIL_HEADER = "Dear user,</br></br>";
 

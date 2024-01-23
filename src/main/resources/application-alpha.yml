@@ -84,6 +84,7 @@ spring:
 batch:
   cron:
     sample: 0 9/10 0 * * *
+    backup-media: 0 0/15 * * * *
   fixed:
     sample: 30000
   initial:
