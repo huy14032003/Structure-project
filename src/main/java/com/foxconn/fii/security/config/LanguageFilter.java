@@ -3,17 +3,11 @@ package com.foxconn.fii.security.config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 @Slf4j
 public class LanguageFilter implements Filter {
@@ -30,6 +24,8 @@ public class LanguageFilter implements Filter {
                 String lang = request.getParameter("lang");
                 if (!StringUtils.isEmpty(lang)) {
                     Cookie cookie = new Cookie("lang", lang);
+//                    cookie.setSecure(true);
+//                    cookie.setHttpOnly(true);
                     cookie.setPath("/");
                     response.addCookie(cookie);
                 }
@@ -46,6 +42,7 @@ public class LanguageFilter implements Filter {
                     url += "?" + request.getQueryString();
                 }
                 Cookie cookie = new Cookie("previous_page", url);
+                cookie.setSecure(true);
                 cookie.setHttpOnly(true);
                 cookie.setPath("/");
                 response.addCookie(cookie);

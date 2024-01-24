@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static com.foxconn.fii.config.ApplicationConstant.APPLICATION_NAME_HRM;
 
@@ -81,6 +82,7 @@ public class NotifyServiceImpl implements NotifyService {
     }
 
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean getSendMailPermission(String empNo) {
         if (StringUtils.isEmpty(APPLICATION_NAME_HRM)) {

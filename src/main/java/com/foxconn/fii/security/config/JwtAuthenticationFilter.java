@@ -6,13 +6,11 @@ import com.foxconn.fii.security.exception.JwtTokenInvalidException;
 import com.foxconn.fii.security.jwt.config.PathRequestMatcher;
 import com.foxconn.fii.security.jwt.model.token.JwtAuthenticationToken;
 import com.foxconn.fii.security.jwt.model.token.extractor.TokenExtractor;
-import com.foxconn.fii.security.model.UserContext;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -73,6 +71,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
         this.endpointMatcher = new PathRequestMatcher(securedEndpointList);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException, IOException, ServletException {

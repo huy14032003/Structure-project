@@ -216,7 +216,7 @@ public class ExcelUtils {
                         break;
                     case FORMULA:
                         String oldFormula = oldCell.getCellFormula();
-                        String[] cellAddresses = oldFormula.split("[+\\-\\*\\/]");
+                        String[] cellAddresses = oldFormula.split("[+\\-*/]");
                         for (String cellAddress : cellAddresses) {
                             CellAddress oldCellAddress = new CellAddress(cellAddress);
                             CellAddress newCellAddress = new CellAddress(newCell.getRowIndex() + oldCellAddress.getRow() - oldCell.getRowIndex(), oldCellAddress.getColumn());

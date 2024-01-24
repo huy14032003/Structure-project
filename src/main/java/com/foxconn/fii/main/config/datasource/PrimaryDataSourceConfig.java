@@ -56,7 +56,7 @@ public class PrimaryDataSourceConfig {
 
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(primaryDataSource(dataSourceProperties()));
-        em.setPackagesToScan("com.foxconn.fii.main.data.primary", "com.foxconn.fii.notify.postman");
+        em.setPackagesToScan("com.foxconn.fii.main.data.primary");
 
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);

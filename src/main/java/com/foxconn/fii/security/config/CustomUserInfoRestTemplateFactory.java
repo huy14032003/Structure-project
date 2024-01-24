@@ -13,7 +13,7 @@ import org.springframework.security.oauth2.client.token.RequestEnhancer;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -47,7 +47,7 @@ public class CustomUserInfoRestTemplateFactory extends DefaultUserInfoRestTempla
         public void enhance(AccessTokenRequest request,
                             OAuth2ProtectedResourceDetails resource,
                             MultiValueMap<String, String> form, HttpHeaders headers) {
-            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         }
 
     }

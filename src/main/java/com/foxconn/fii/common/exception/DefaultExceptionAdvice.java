@@ -9,9 +9,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.io.IOException;
-import java.util.Optional;
-
 @Slf4j
 @ControllerAdvice
 public class DefaultExceptionAdvice extends ResponseEntityExceptionHandler {
@@ -23,7 +20,7 @@ public class DefaultExceptionAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<CommonResponse<Boolean>> handleException(Exception e) throws IOException {
+    public ResponseEntity<CommonResponse<Boolean>> handleException(Exception e) {
         log.error("### unhandled exception ", e);
         CommonResponse<Boolean> response = CommonResponse.of(HttpStatus.BAD_REQUEST, ResponseCode.FAILED, "Exception: " + e.getMessage(), null);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

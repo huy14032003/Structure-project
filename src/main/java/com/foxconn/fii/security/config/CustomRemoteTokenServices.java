@@ -28,7 +28,7 @@ public class CustomRemoteTokenServices /*extends RemoteTokenServices*/ {
     @PostConstruct
     public void postConstruct(){
         RestTemplate restTemplate = new RestTemplate();
-        ((RestTemplate) restTemplate).setErrorHandler(new DefaultResponseErrorHandler() {
+        restTemplate.setErrorHandler(new DefaultResponseErrorHandler() {
             @Override
             // Ignore 400
             public void handleError(ClientHttpResponse response) throws IOException {
@@ -58,9 +58,7 @@ public class CustomRemoteTokenServices /*extends RemoteTokenServices*/ {
 
     private HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory() {
         try {
-            TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> {
-                return true;
-            };
+            TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
 
             SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()
                     .loadTrustMaterial(null, acceptingTrustStrategy)
@@ -77,7 +75,7 @@ public class CustomRemoteTokenServices /*extends RemoteTokenServices*/ {
             clientHttpRequestFactory.setReadTimeout(3 * 60 * 1000);
             return clientHttpRequestFactory;
         } catch (Exception e) {
-            return null;
+            return new HttpComponentsClientHttpRequestFactory();
         }
     }
 }

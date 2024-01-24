@@ -1,7 +1,6 @@
 package com.foxconn.fii.main.controller.rest;
 
 import com.foxconn.fii.common.exception.CommonException;
-import com.foxconn.fii.common.response.CommonResponse;
 import com.foxconn.fii.common.response.ListResponse;
 import com.foxconn.fii.common.utils.CommonUtils;
 import lombok.extern.slf4j.Slf4j;

@@ -30,7 +30,7 @@ public class SftpUtils {
     public static boolean downloadSftp(String host, int port, String username, String password, String fileInPath, String fileOutPath) {
         fileInPath = fileInPath.replace("\\\\", "/").replace("\\", "/");
         fileOutPath = fileOutPath.replace("\\\\", "/").replace("\\", "/");
-        ChannelSftp channelSftp = null;
+        ChannelSftp channelSftp;
         try {
             channelSftp = createChannel(host, port, username, password);
         } catch (JSchException e) {
@@ -57,7 +57,7 @@ public class SftpUtils {
     public static boolean uploadSftp(String host, int port, String username, String password, String localFile, String sftpFile) {
         localFile = localFile.replace("\\\\", "/").replace("\\", "/");
         sftpFile = sftpFile.replace("\\\\", "/").replace("\\", "/");
-        ChannelSftp channelSftp = null;
+        ChannelSftp channelSftp;
         try {
             channelSftp = createChannel(host, port, username, password);
         } catch (JSchException e) {
@@ -100,7 +100,7 @@ public class SftpUtils {
 
     public static boolean uploadSftp(String host, int port, String username, String password, InputStream localFile, String sftpFile) {
         sftpFile = sftpFile.replace("\\\\", "/").replace("\\", "/");
-        ChannelSftp channelSftp = null;
+        ChannelSftp channelSftp;
         try {
             channelSftp = createChannel(host, port, username, password);
         } catch (JSchException e) {
@@ -144,7 +144,7 @@ public class SftpUtils {
     public static boolean uploadDirectorySftp(String host, int port, String username, String password, String sourcePath, String destinationPath) {
         sourcePath = sourcePath.replace("\\\\", "/").replace("\\", "/");
         destinationPath = destinationPath.replace("\\\\", "/").replace("\\", "/");
-        ChannelSftp channelSftp = null;
+        ChannelSftp channelSftp;
         try {
             channelSftp = createChannel(host, port, username, password);
         } catch (JSchException e) {
@@ -187,9 +187,8 @@ public class SftpUtils {
         } else {
             File[] files = sourceFile.listFiles();
             if (files != null && !sourceFile.getName().startsWith(".")) {
-                SftpATTRS attrs = null;
                 try {
-                    attrs = channelSftp.stat(destinationPath + "/" + sourceFile.getName());
+                    channelSftp.stat(destinationPath + "/" + sourceFile.getName());
                 } catch (Exception e) {
                     System.out.println(destinationPath + "/" + sourceFile.getName() + " not found");
                     System.out.println("Creating dir " + sourceFile.getName());

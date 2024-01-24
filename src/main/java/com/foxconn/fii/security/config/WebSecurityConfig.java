@@ -81,11 +81,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.antMatcher("/**")
                 .authorizeRequests()
                 .antMatchers(ignoredList).permitAll()
-//                .antMatchers(securedPageList)
-//                .hasRole("WS_USER")
-//                .antMatchers(securedEndpointList)
-//                .hasRole("WS_USER")
-//                .anyRequest()..authenticated()
+                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security", "/swagger-ui.html").hasAnyRole("OAUTH_ADMIN")
                 .anyRequest().hasAnyRole("OAUTH_USER")
 //                .and().formLogin().loginPage("/sign-in")
 //                .successForwardUrl("/home")
@@ -96,7 +92,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies("SAMPLE_SESSION", "access_token", "refresh_token")
 //                .logoutSuccessUrl("/home")
 //                .logoutSuccessUrl(String.format("%s?redirectUrl=%s", logoutUrl, domain))
-                .logoutSuccessHandler(new CustomLogoutSuccessHandler(domains, oauth2Properties.getLogoutUrl()));
+                .logoutSuccessHandler(new CustomLogoutSuccessHandler(domains, oauth2Properties.getLogoutUrl()))
         ;
 
         http.csrf().disable();
@@ -109,11 +105,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(
 //                "/**",
-//                "/v2/api-docs",
-//                "/configuration/ui",
-//                "/swagger-resources/**",
-//                "/configuration/security",
-//                "/swagger-ui.html",
                 "/webjars/**",
                 "/templates/**",
                 "/WEB-INF/jsp/**",

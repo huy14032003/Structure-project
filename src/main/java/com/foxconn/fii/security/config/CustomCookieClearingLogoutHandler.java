@@ -8,7 +8,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 public final class CustomCookieClearingLogoutHandler implements LogoutHandler {
@@ -21,16 +20,12 @@ public final class CustomCookieClearingLogoutHandler implements LogoutHandler {
     }
 
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        Iterator var4 = this.cookiesToClear.iterator();
-
-        while (var4.hasNext()) {
-            String cookieName = (String) var4.next();
-            Cookie cookie = new Cookie(cookieName, (String) null);
+        for (String cookieName : this.cookiesToClear) {
+            Cookie cookie = new Cookie(cookieName, null);
             String cookiePath = "/";
             cookie.setPath(cookiePath);
             cookie.setMaxAge(0);
             response.addCookie(cookie);
         }
-
     }
 }

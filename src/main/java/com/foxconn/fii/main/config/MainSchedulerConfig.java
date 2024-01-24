@@ -1,7 +1,7 @@
 package com.foxconn.fii.main.config;
 
-import com.foxconn.fii.config.SftpProperties;
 import com.foxconn.fii.common.utils.SftpUtils;
+import com.foxconn.fii.config.SftpProperties;
 import com.jcraft.jsch.ChannelSftp;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +101,7 @@ public class MainSchedulerConfig {
         }
     }
 
-    private void backupLogs() {
+//    private void backupLogs() {
 //        String logPath = "D:\\tiennd\\app\\apache24\\logs\\";
 //        for (int day = 1; day <= 30; day++) {
 //            String filePath = logPath + String.format("httpd-access.2023.04.%02d.log", day);
@@ -161,5 +161,5 @@ public class MainSchedulerConfig {
 ////                throw new CommonException(String.format("process log %s %s", e.getCause(), e.getMessage()));
 //            }
 //        }
-    }
+//    }
 }

@@ -28,9 +28,7 @@ public class CustomAuthorizationCodeAccessTokenProvider extends AuthorizationCod
 
     private HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory() {
         try {
-            TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> {
-                return true;
-            };
+            TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
 
             SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()
                     .loadTrustMaterial(null, acceptingTrustStrategy)

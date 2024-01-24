@@ -208,13 +208,12 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         } else if (authentication instanceof OAuth2Authentication) {
             OAuth2Authentication principal = (OAuth2Authentication) authentication;
             if (principal.getPrincipal() != null) {
+//                OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
+//                user.setSessionId(details.getSessionId());
                 String username = (String) principal.getPrincipal();
 
                 OAuth2User oauth2User = getCurrentUserInformation();
-
-//                OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) authentication.getDetails();
-//                user.setSessionId(details.getSessionId());
-
+                oauth2User.setUsername(username);
                 SecurityContextHolder.getContext().setAuthentication(new OAuth2Principal(principal, oauth2User));
 
                 return oauth2User;
@@ -223,11 +222,11 @@ public class OAuth2ServiceImpl implements OAuth2Service {
             JwtAuthenticationToken principal = (JwtAuthenticationToken) authentication;
             if (principal.getPrincipal() != null) {
 //                String username = ((UserContext) principal.getPrincipal()).getUsername();
+//                user.setSessionId(((RawToken) principal.getCredentials()).getToken());
                 String username = (String) principal.getPrincipal();
 
                 OAuth2User oauth2User = getCurrentUserInformation();
-
-//                user.setSessionId(((RawToken) principal.getCredentials()).getToken());
+                oauth2User.setUsername(username);
 
                 return oauth2User;
             }

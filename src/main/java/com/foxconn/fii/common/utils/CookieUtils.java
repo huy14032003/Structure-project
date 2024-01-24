@@ -20,12 +20,13 @@ public class CookieUtils {
         httpServletResponse.addCookie(cookie);
     }
 
-    public static void clear(HttpServletResponse httpServletResponse, String name) {
+    public static void clear(HttpServletResponse httpServletResponse, String name, Boolean secure, String domain) {
         Cookie cookie = new Cookie(name, null);
-        cookie.setPath("/");
+        cookie.setSecure(secure);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(0);
-        cookie.setDomain("localhost");
+        cookie.setDomain(domain);
+        cookie.setPath("/");
         httpServletResponse.addCookie(cookie);
     }
 
