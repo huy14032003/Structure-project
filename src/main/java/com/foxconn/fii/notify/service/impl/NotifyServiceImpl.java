@@ -113,6 +113,7 @@ public class NotifyServiceImpl implements NotifyService {
                 }
             }
         } catch (Exception e) {
+            flag = true;
             log.error("### error", e);
         }
 
