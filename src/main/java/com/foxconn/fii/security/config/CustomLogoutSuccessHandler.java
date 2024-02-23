@@ -31,26 +31,32 @@ public class CustomLogoutSuccessHandler extends AbstractAuthenticationTargetUrlR
         String requestUrl = httpServletRequest.getRequestURL().toString();
         String defaultTargetUrl = this.logoutSuccessUrl;
 
-        boolean flag = false;
+        boolean trustFlag = false;
         for (String domain : this.domains) {
             if (requestUrl.startsWith(domain)) {
-                flag = true;
+                trustFlag = true;
                 break;
             }
         }
 
-        if (!flag) {
-            defaultTargetUrl = "/sign-in";
-        } else {
-            String redirectUrl = requestUrl.replace(httpServletRequest.getRequestURI(), "");
-            String previousPage = CookieUtils.getValue(httpServletRequest, "previous_page");
-            if (!StringUtils.isEmpty(previousPage)) {
-                redirectUrl = redirectUrl + previousPage;
-            } else {
-                redirectUrl = redirectUrl + httpServletRequest.getContextPath();
-            }
-            defaultTargetUrl = defaultTargetUrl + String.format("?redirectUrl=%s", redirectUrl);
+        if (!trustFlag) {
+//            defaultTargetUrl = "/sign-in";
+            defaultTargetUrl = requestUrl.substring(0, requestUrl.indexOf("/", 10)) + defaultTargetUrl.substring(defaultTargetUrl.indexOf("/", 10));
         }
+
+
+        String redirectUrl = requestUrl.replace(httpServletRequest.getRequestURI(), "");
+        String referer = httpServletRequest.getHeader("referer");
+        String previousPage = CookieUtils.getValue(httpServletRequest, "previous_page");
+        if (!StringUtils.isEmpty(referer)) {
+            redirectUrl = referer;
+        } else if (!StringUtils.isEmpty(previousPage)) {
+            redirectUrl = redirectUrl + previousPage;
+        } else {
+            redirectUrl = redirectUrl + httpServletRequest.getContextPath();
+        }
+        defaultTargetUrl = defaultTargetUrl + String.format("?redirectUrl=%s", redirectUrl);
+
         this.setDefaultTargetUrl(defaultTargetUrl);
         this.handle(httpServletRequest, httpServletResponse, authentication);
     }

@@ -28,7 +28,7 @@ public class ExcelUtils {
             case STRING:
                 return cell.getStringCellValue().replaceAll(" ", " ").trim();
             case NUMERIC:
-                if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                if (DateUtil.isCellDateFormatted(cell)) {
                     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     return df.format(cell.getDateCellValue());
                 } else {
@@ -63,7 +63,7 @@ public class ExcelUtils {
             case STRING:
                 return cell.getStringCellValue();
             case NUMERIC:
-                if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                if (DateUtil.isCellDateFormatted(cell)) {
                     SimpleDateFormat df = new SimpleDateFormat(datePattern);
                     return df.format(cell.getDateCellValue());
                 } else {

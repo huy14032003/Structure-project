@@ -194,7 +194,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
         String token = (String) responseEntity.getBody().get("access_token");
 
         Cookie cookie = new Cookie("access_token", token);
-        cookie.setPath("/hr-system/");
+        cookie.setPath("/sample-system/");
         cookie.setMaxAge(12*60*60);
         response.addCookie(cookie);
 
