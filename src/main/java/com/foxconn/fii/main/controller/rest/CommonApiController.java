@@ -1,9 +1,16 @@
 package com.foxconn.fii.main.controller.rest;
 
 import com.foxconn.fii.common.exception.CommonException;
+import com.foxconn.fii.common.response.CommonResponse;
 import com.foxconn.fii.common.response.ListResponse;
 import com.foxconn.fii.common.utils.CommonUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -67,7 +74,7 @@ public class CommonApiController {
     public ListResponse<String> uploadFile(
             @PathVariable String fileType,
             @RequestPart MultipartFile[] files,
-            @RequestAttribute(required = false) Integer originalFlag) {
+            Integer originalFlag) {
 
         if (!"|public|tmp|file|image|audio|video|".contains("|" + fileType + "|")) {
             throw CommonException.of("File type {} is not support", fileType);
@@ -114,5 +121,74 @@ public class CommonApiController {
         }
 
         return ListResponse.success(urlList);
+    }
+
+
+
+    @PostMapping(value = {"/api/preview/excel"}, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public CommonResponse<List<Map<String, String>>> previewExcel(@RequestPart MultipartFile uploadedFile,
+                                                                  Integer headerIndex,
+                                                                  Integer headerSize) {
+        List<Map<String, String>> table = new ArrayList<>();
+
+        try {
+            Workbook workbook;
+            FormulaEvaluator evaluator = null;
+            try {
+                workbook = WorkbookFactory.create(uploadedFile.getInputStream());
+                if (workbook instanceof XSSFWorkbook) {
+                    evaluator = new XSSFFormulaEvaluator(((XSSFWorkbook) workbook));
+                } else if (workbook instanceof HSSFWorkbook) {
+                    evaluator = new HSSFFormulaEvaluator(((HSSFWorkbook) workbook));
+                }
+            } catch (Exception e) {
+                throw CommonException.of("uploaded file is not xls or xlsx file");
+            }
+
+            if (workbook.getNumberOfSheets() == 0) {
+                throw CommonException.of("excel file is not include any sheet");
+            }
+
+            if (headerIndex == null || headerIndex < 0) {
+                headerIndex = 0;
+            }
+            if (headerSize == null || headerSize < 0) {
+                headerSize = 0;
+            }
+
+            Sheet sheet = workbook.getSheetAt(0);
+            DataFormatter formatter = new DataFormatter();
+
+            Map<Integer, String> headerMap = new TreeMap<>();
+            for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row == null) {
+                    continue;
+                }
+
+                if (i >= headerIndex) {
+                    if (i < headerIndex + headerSize) {
+                        for (Cell cell : row) {
+                            headerMap.put(cell.getColumnIndex(), headerMap.getOrDefault(cell.getColumnIndex(), "") + formatter.formatCellValue(cell, evaluator));
+                        }
+                    } else {
+                        Map<String, String> rowMap = new LinkedHashMap<>();
+                        for (Cell cell : row) {
+                            String key = headerMap.getOrDefault(cell.getColumnIndex(), "");
+                            if (StringUtils.isEmpty(key)) {
+                                key = CellReference.convertNumToColString(cell.getColumnIndex());
+                            }
+                            rowMap.put(key, formatter.formatCellValue(cell, evaluator));
+                        }
+                        table.add(rowMap);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("### get table data from excel file error", e);
+            throw new CommonException(String.format("get table data from excel file %s %s", e.getCause(), e.getMessage()));
+        }
+
+        return CommonResponse.success(table);
     }
 }

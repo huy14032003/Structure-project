@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,55 +30,66 @@ public class ErrorMvcController implements ErrorController {
         return serverProperties.getError().getPath();
     }
 
-    @RequestMapping("/error")
-    public String handleError(HttpServletRequest request,
-                              HttpServletResponse response,
-                              Model model) {
+    @RequestMapping(value = "/error", method = RequestMethod.GET)
+    public String errorPage(HttpServletRequest request,
+                            HttpServletResponse response,
+                            Model model) {
         HttpStatus status = getStatus(request);
 
-        if (status.value() == 404) {
-            model.addAttribute("path", "page-404");
-            model.addAttribute("title", "Page 404");
+        if (status.value() == 401) {
+            model.addAttribute("path", "error-401");
+            model.addAttribute("title", "Error 401");
+            model.addAttribute("error", "Error 401");
         } else if (status.value() == 403) {
-            model.addAttribute("path", "page-403");
-            model.addAttribute("title", "Page 403");
+            model.addAttribute("path", "error-403");
+            model.addAttribute("title", "Error 403");
+            model.addAttribute("error", "Error 403");
+        } else if (status.value() == 404) {
+            model.addAttribute("path", "error-404");
+            model.addAttribute("title", "Error 404");
+            model.addAttribute("error", "Error 404");
         } else if (status.value() == 500) {
-            model.addAttribute("path", "page-500");
-            model.addAttribute("title", "Page 500");
+            model.addAttribute("path", "error-500");
+            model.addAttribute("title", "Error 500");
+            model.addAttribute("error", "Error 500");
         }
 
         return "application-error";
     }
 
 
-    @RequestMapping("/page-401")
-    public String page401(Model model) {
-        model.addAttribute("path", "page-401");
-        model.addAttribute("title", "Page 401");
+    @RequestMapping(value = "/error-401", method = RequestMethod.GET)
+    public String error401(Model model) {
+        model.addAttribute("path", "error-401");
+        model.addAttribute("title", "Error 401");
+        model.addAttribute("error", "Error 401");
 
         return "application-error";
     }
 
-    @RequestMapping("/page-403")
-    public String page403(Model model) {
-        model.addAttribute("path", "page-403");
-        model.addAttribute("title", "Page 403");
+    @RequestMapping(value = "/error-403", method = RequestMethod.GET)
+    public String error403(Model model) {
+        model.addAttribute("path", "error-403");
+        model.addAttribute("title", "Error 403");
+        model.addAttribute("error", "Error 403");
 
         return "application-error";
     }
 
-    @RequestMapping("/page-404")
-    public String page404(Model model) {
-        model.addAttribute("path", "page-404");
-        model.addAttribute("title", "Page 404");
+    @RequestMapping(value = "/error-404", method = RequestMethod.GET)
+    public String error404(Model model) {
+        model.addAttribute("path", "error-404");
+        model.addAttribute("title", "Error 404");
+        model.addAttribute("error", "Error 404");
 
         return "application-error";
     }
 
-    @RequestMapping("/page-500")
-    public String page500(Model model) {
-        model.addAttribute("path", "page-500");
-        model.addAttribute("title", "Page 500");
+    @RequestMapping(value = "/error-500", method = RequestMethod.GET)
+    public String error500(Model model) {
+        model.addAttribute("path", "error-500");
+        model.addAttribute("title", "Error 500");
+        model.addAttribute("error", "Error 500");
 
         return "application-error";
     }

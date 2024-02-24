@@ -8,25 +8,25 @@
 
 
 
-    <c:when test="${path == 'page-401'}">
-        <%@ include file="component/error-page/page-401.jsp" %>
+    <c:when test="${path == 'error-401'}">
+        <%@ include file="component/error-page/error-401.jsp" %>
     </c:when>
 
-    <c:when test="${path == 'page-403'}">
-        <%@ include file="component/error-page/page-403.jsp" %>
+    <c:when test="${path == 'error-403'}">
+        <%@ include file="component/error-page/error-403.jsp" %>
     </c:when>
 
-    <c:when test="${path == 'page-404'}">
-        <%@ include file="component/error-page/page-404.jsp" %>
+    <c:when test="${path == 'error-404'}">
+        <%@ include file="component/error-page/error-404.jsp" %>
     </c:when>
 
-    <c:when test="${path == 'page-500'}">
-        <%@ include file="component/error-page/page-500.jsp" %>
+    <c:when test="${path == 'error-500'}">
+        <%@ include file="component/error-page/error-500.jsp" %>
     </c:when>
 
 
     <c:otherwise>
-        <%@ include file="component/error-page/page-404.jsp" %>
+        <%@ include file="component/error-page/error-404.jsp" %>
     </c:otherwise>
 
 </c:choose>
