@@ -1,5 +1,6 @@
 package com.foxconn.fii.security.config;
 
+import com.foxconn.fii.common.utils.CookieUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
@@ -23,11 +24,7 @@ public class LanguageFilter implements Filter {
                 log.debug("### filter language process");
                 String lang = request.getParameter("lang");
                 if (!StringUtils.isEmpty(lang)) {
-                    Cookie cookie = new Cookie("lang", lang);
-//                    cookie.setSecure(true);
-//                    cookie.setHttpOnly(true);
-                    cookie.setPath("/");
-                    response.addCookie(cookie);
+                    CookieUtils.create(request, response, "lang", lang, 14 * 24 * 60 * 60);
                 }
             }
 
@@ -41,11 +38,7 @@ public class LanguageFilter implements Filter {
                 if (!StringUtils.isEmpty(request.getQueryString())) {
                     url += "?" + request.getQueryString();
                 }
-                Cookie cookie = new Cookie("previous_page", url);
-                cookie.setSecure(true);
-                cookie.setHttpOnly(true);
-                cookie.setPath("/");
-                response.addCookie(cookie);
+                CookieUtils.create(request, response, "previous_page", url, 14 * 24 * 60 * 60, true);
             }
         }
 

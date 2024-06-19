@@ -11,6 +11,7 @@ public class OAuth2Principal extends OAuth2Authentication {
 
     public OAuth2Principal(OAuth2Authentication auth2Authentication, OAuth2User user) {
         super(auth2Authentication.getOAuth2Request(), auth2Authentication.getUserAuthentication());
+        this.setDetails(auth2Authentication.getDetails());
         this.user = user;
     }
 

@@ -47,7 +47,7 @@ public class CustomLogoutSuccessHandler extends AbstractAuthenticationTargetUrlR
 
         String redirectUrl = requestUrl.replace(httpServletRequest.getRequestURI(), "");
         String referer = httpServletRequest.getHeader("referer");
-        String previousPage = CookieUtils.getValue(httpServletRequest, "previous_page");
+        String previousPage = CookieUtils.getCookieValue(httpServletRequest, "previous_page");
         if (!StringUtils.isEmpty(referer)) {
             redirectUrl = referer;
         } else if (!StringUtils.isEmpty(previousPage)) {

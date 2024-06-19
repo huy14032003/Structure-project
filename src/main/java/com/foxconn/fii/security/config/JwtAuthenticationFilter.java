@@ -2,6 +2,7 @@ package com.foxconn.fii.security.config;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.foxconn.fii.common.utils.CookieUtils;
 import com.foxconn.fii.security.exception.JwtTokenInvalidException;
 import com.foxconn.fii.security.jwt.config.PathRequestMatcher;
 import com.foxconn.fii.security.jwt.model.token.JwtAuthenticationToken;
@@ -109,7 +110,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
         if (StringUtils.isEmpty(token)) {
             try {
-                token = getTokenFromRefreshToken(refreshToken, response);
+                token = getTokenFromRefreshToken(refreshToken, request, response);
             } catch (RestClientException e) {
                 return buildAnonymousAuthentication(request);
             }
@@ -136,7 +137,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
                     return buildAnonymousAuthentication(request);
                 }
 
-                token = getTokenFromRefreshToken(refreshToken, response);
+                token = getTokenFromRefreshToken(refreshToken, request, response);
 
                 uriBuilder = UriComponentsBuilder.fromHttpUrl(oauth2Properties.getResource().getTokenInfoUri()).queryParam("token", token);
                 responseEntity = restTemplate.exchange(uriBuilder.toUriString(), HttpMethod.POST, entity, new ParameterizedTypeReference<Map<String, Object>>() {});
@@ -171,7 +172,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
         return new JwtAuthenticationToken("anonymousUser", Collections.emptyList());
     }
 
-    private String getTokenFromRefreshToken(String refreshToken, HttpServletResponse response) {
+    private String getTokenFromRefreshToken(String refreshToken, HttpServletRequest request, HttpServletResponse response) {
         HttpHeaders headers = new HttpHeaders();
         String authorization = Base64.getEncoder().encodeToString(
                 String.format("%s:%s", oauth2Properties.getClient().getClientId(), oauth2Properties.getClient().getClientSecret()).getBytes());
@@ -193,10 +194,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
 
         String token = (String) responseEntity.getBody().get("access_token");
 
-        Cookie cookie = new Cookie("access_token", token);
-        cookie.setPath("/sample-system/");
-        cookie.setMaxAge(12*60*60);
-        response.addCookie(cookie);
+        CookieUtils.create(request, response, "access_token", token, 12 * 60 * 60);
 
         return token;
     }

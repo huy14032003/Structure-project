@@ -10,29 +10,46 @@ import javax.servlet.http.HttpServletResponse;
 @UtilityClass
 public class CookieUtils {
 
-    public static void create(HttpServletResponse httpServletResponse, String name, String value, Boolean secure, Integer maxAge, String domain) {
+    public static void create(HttpServletRequest request, HttpServletResponse response, String name, String value, Integer maxAge) {
         Cookie cookie = new Cookie(name, value);
-        cookie.setSecure(secure);
-        cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
-        cookie.setDomain(domain);
-        cookie.setPath("/");
-        httpServletResponse.addCookie(cookie);
+        cookie.setPath(request.getContextPath().length() > 0 ? request.getContextPath() : "/");
+        cookie.setSecure(request.isSecure());
+        response.addCookie(cookie);
     }
 
-    public static void clear(HttpServletResponse httpServletResponse, String name, Boolean secure, String domain) {
+    public static void create(HttpServletRequest request, HttpServletResponse response, String name, String value, Integer maxAge, Boolean httpOnly) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setMaxAge(maxAge);
+        cookie.setPath(request.getContextPath().length() > 0 ? request.getContextPath() : "/");
+        cookie.setSecure(request.isSecure());
+        cookie.setHttpOnly(httpOnly);
+        response.addCookie(cookie);
+    }
+
+    public static void clear(HttpServletRequest request, HttpServletResponse response, String name) {
         Cookie cookie = new Cookie(name, null);
-        cookie.setSecure(secure);
-        cookie.setHttpOnly(true);
         cookie.setMaxAge(0);
-        cookie.setDomain(domain);
-        cookie.setPath("/");
-        httpServletResponse.addCookie(cookie);
+        cookie.setPath(request.getContextPath().length() > 0 ? request.getContextPath() : "/");
+        cookie.setSecure(request.isSecure());
+        response.addCookie(cookie);
     }
 
-    public static String getValue(HttpServletRequest httpServletRequest, String name) {
-        Cookie cookie = WebUtils.getCookie(httpServletRequest, name);
+    public static void clear(HttpServletRequest request, HttpServletResponse response, String name, Boolean httpOnly) {
+        Cookie cookie = new Cookie(name, null);
+        cookie.setMaxAge(0);
+        cookie.setPath(request.getContextPath().length() > 0 ? request.getContextPath() : "/");
+        cookie.setSecure(request.isSecure());
+        cookie.setHttpOnly(httpOnly);
+        response.addCookie(cookie);
+    }
+
+    public static Cookie getCookie(HttpServletRequest request, String name) {
+        return WebUtils.getCookie(request, name);
+    }
+
+    public static String getCookieValue(HttpServletRequest request, String name) {
+        Cookie cookie = WebUtils.getCookie(request, name);
         return cookie != null ? cookie.getValue() : null;
     }
-
 }
