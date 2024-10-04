@@ -101,7 +101,7 @@ public class CommonApiController {
         for (MultipartFile multipartFile : files) {
             String filename = multipartFile.getOriginalFilename();
             if (originalFlag == null || originalFlag == 0) {
-                String name = System.currentTimeMillis() + "-" + new Random().nextInt(100);
+                String name = UUID.randomUUID().toString().replaceAll("-", "");
                 String extension = CommonUtils.getExtension(multipartFile.getOriginalFilename());
                 if (!StringUtils.isEmpty(extension)) {
                     extension = "." + extension;

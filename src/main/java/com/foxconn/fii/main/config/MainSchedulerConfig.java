@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
 
 @Slf4j
@@ -81,7 +82,7 @@ public class MainSchedulerConfig {
                     if (file.isFile()) {
                         channelSftp.put(file.getPath(), "/media" + contextPath + "/" + filePath);
                         try {
-                            Files.move(file.toPath(), Paths.get(dataPath + filePath));
+                            Files.move(file.toPath(), Paths.get(dataPath + filePath), StandardCopyOption.REPLACE_EXISTING);
                         } catch (Exception e) {
                             Files.move(file.toPath(), Paths.get(dataPath + filePath + ".err"));
                         }

@@ -215,14 +215,20 @@ public class ExcelUtils {
                         newCell.setCellValue(oldCell.getBooleanCellValue());
                         break;
                     case FORMULA:
+                        StringBuilder sb = new StringBuilder();
                         String oldFormula = oldCell.getCellFormula();
-                        String[] cellAddresses = oldFormula.split("[+\\-*/]");
+                        String[] cellAddresses = oldFormula.split("(?=[+\\-\\*\\/:,\\(\\)])|(?<=[+\\-\\*\\/:,\\(\\)])");
                         for (String cellAddress : cellAddresses) {
-                            CellAddress oldCellAddress = new CellAddress(cellAddress);
-                            CellAddress newCellAddress = new CellAddress(newCell.getRowIndex() + oldCellAddress.getRow() - oldCell.getRowIndex(), oldCellAddress.getColumn());
-                            oldFormula = oldFormula.replace(cellAddress, newCellAddress.formatAsString());
+                            if (cellAddress.matches("[a-zA-Z]+[0-9]+")) {
+                                CellAddress oldCellAddress = new CellAddress(cellAddress);
+                                CellAddress newCellAddress = new CellAddress(newCell.getRowIndex() + oldCellAddress.getRow() - oldCell.getRowIndex(), oldCellAddress.getColumn());
+//                                oldFormula = oldFormula.replace(cellAddress, newCellAddress.formatAsString());
+                                sb.append(newCellAddress.formatAsString());
+                            } else {
+                                sb.append(cellAddress);
+                            }
                         }
-                        newCell.setCellFormula(oldFormula);
+                        newCell.setCellFormula(sb.toString());
                         break;
                     case BLANK:
                         newCell.setBlank();

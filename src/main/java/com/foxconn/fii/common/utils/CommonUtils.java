@@ -1,6 +1,9 @@
 package com.foxconn.fii.common.utils;
 
 import lombok.experimental.UtilityClass;
+import org.springframework.util.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 
 @UtilityClass
 public class CommonUtils {
@@ -17,5 +20,13 @@ public class CommonUtils {
             int index = filename.lastIndexOf(".");
             return index == -1 ? "" : filename.substring(index + 1);
         }
+    }
+
+    public String getClientIP(HttpServletRequest request) {
+        String clientIP = request.getHeader("x-forwarded-for");
+        if (StringUtils.isEmpty(clientIP)) {
+            clientIP = request.getRemoteAddr();
+        }
+        return clientIP;
     }
 }

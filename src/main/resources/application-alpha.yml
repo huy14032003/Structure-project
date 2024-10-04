@@ -3,7 +3,7 @@ server:
   http.port: 8000
   port: 18000
   domains: >
-    https://fiisw.cnsbg.efoxconn.com:6443/sample-system,
+    https://fiisw-cns.myfiinet.com/sample-system,
     https://10.224.81.70:6443/sample-system
   servlet:
     context-path: /sample-system
@@ -27,24 +27,24 @@ security:
     client:
       clientId: ws-system
       clientSecret: Foxconn168!!
-      accessTokenUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/token
-      userAuthorizationUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/authorize
+      accessTokenUri: https://fiisw-cns.myfiinet.com/oauth-service/oauth/token
+      userAuthorizationUri: https://fiisw-cns.myfiinet.com/oauth-service/oauth/authorize
       clientAuthenticationScheme: header
     resource:
-      tokenInfoUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/check_token
-      userDetailsUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/user/details
-      userInfoUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/user/current
-      userChangePassUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/user/change-password
-      userSearchUri: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/oauth/user/information
-    logoutUrl: https://fiisw.cnsbg.efoxconn.com:6443/oauth-service/logout
+      tokenInfoUri: https://fiisw-cns.myfiinet.com/oauth-service/oauth/check_token
+      userDetailsUri: https://fiisw-cns.myfiinet.com/oauth-service/oauth/user/details
+      userInfoUri: https://fiisw-cns.myfiinet.com/oauth-service/oauth/user/current
+      userChangePassUri: https://fiisw-cns.myfiinet.com/oauth-service/oauth/user/change-password
+      userSearchUri: https://fiisw-cns.myfiinet.com/oauth-service/oauth/user/information
+    logoutUrl: https://fiisw-cns.myfiinet.com/oauth-service/logout
 
 # db
 spring:
   datasource:
 #    url: jdbc:h2:mem:b04;DB_CLOSE_DELAY=-1
 #    driver-class-name: org.h2.Driver
-    url: jdbc:sqlserver://10.224.81.145:3000;databaseName=fiistore
-    username: fii
+    url: jdbc:sqlserver://10.224.81.234:3000;databaseName=sop
+    username: sa
     password: Foxconn168!!
     hibernate.dialect: org.hibernate.dialect.SQLServer2008Dialect
     hikari:
@@ -138,6 +138,7 @@ sftp:
 path:
   data: D:/tiennd/data/project/sample-system/
   temp: D:/tiennd/temp/project/sample-system/
+  tmp: F:/agile/SOP/21
 
 # logging
 logging:

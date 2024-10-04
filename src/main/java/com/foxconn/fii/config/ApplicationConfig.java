@@ -6,6 +6,7 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,7 +38,6 @@ public class ApplicationConfig {
     @Bean
     @Primary
     public ClientHttpRequestFactory httpComponentsClientHttpRequestFactory() throws Exception {
-
         TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
 
         SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()
@@ -46,23 +46,15 @@ public class ApplicationConfig {
 
         SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, new NoopHostnameVerifier());
 
-//        PoolingHttpClientConnectionManager poolingConnectionManager = new PoolingHttpClientConnectionManager();
-//        poolingConnectionManager.setMaxTotal(5);
-//        poolingConnectionManager.setDefaultMaxPerRoute(4);
-
-//        CloseableHttpClient client = HttpClientBuilder.create()
-//                .setConnectionManager(poolingConnectionManager)
-//                .setSSLSocketFactory(csf)
-//                .build();
-
-        CloseableHttpClient client = HttpClients.custom()
-//                .setConnectionManager(poolingConnectionManager)
+        CloseableHttpClient client = HttpClientBuilder.create()
                 .setSSLSocketFactory(csf)
+                .setMaxConnTotal(5)
+                .setMaxConnPerRoute(4)
                 .build();
 
         HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(client);
-        clientHttpRequestFactory.setConnectTimeout(30 * 1000);
-        clientHttpRequestFactory.setReadTimeout(3 * 60 * 1000);
+        clientHttpRequestFactory.setConnectTimeout(15 * 1000);
+        clientHttpRequestFactory.setReadTimeout(90 * 1000);
         return clientHttpRequestFactory;
     }
 
@@ -73,14 +65,30 @@ public class ApplicationConfig {
         return restTemplate;
     }
 
-//    @Bean
-//    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-//        return builder
-//                .requestFactory(new ClientHttpRequestFactorySupplier())
-////                .setConnectTimeout(Duration.ofSeconds(30))
-////                .setReadTimeout(Duration.ofMinutes(3))
-//                .build();
-//    }
+    @Bean(name = "slowRestTemplate")
+    public RestTemplate slowRestTemplate(RestTemplateBuilder builder) throws Exception {
+        TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
+
+        SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()
+                .loadTrustMaterial(null, acceptingTrustStrategy)
+                .build();
+
+        SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext, new NoopHostnameVerifier());
+
+        CloseableHttpClient client = HttpClientBuilder.create()
+                .setSSLSocketFactory(csf)
+                .setMaxConnTotal(5)
+                .setMaxConnPerRoute(4)
+                .build();
+
+        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory(client);
+        clientHttpRequestFactory.setConnectTimeout(30 * 1000);
+        clientHttpRequestFactory.setReadTimeout(180 * 1000);
+
+        return builder
+                .requestFactory(() -> clientHttpRequestFactory)
+                .build();
+    }
 
     @Bean
     public TomcatServletWebServerFactory servletContainer() {

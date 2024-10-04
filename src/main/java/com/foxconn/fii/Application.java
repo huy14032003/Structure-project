@@ -1,6 +1,9 @@
 package com.foxconn.fii;
 
+import com.foxconn.fii.main.service.SampleService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -38,9 +41,17 @@ public class Application extends SpringBootServletInitializer implements Command
     }
 
 
+    @Autowired
+    private SampleService sampleService;
+
+    @Value("${path.tmp}")
+    private String tmpPath;
+
     @Override
     public void run(String... args) throws Exception {
-
+//        String folderPath = "F:\\agile";
+        String folderPath = "E:\\desktop\\textSOP";
+        sampleService.readTextFromExcel(tmpPath);
         log.info("### RUN OK");
     }
 

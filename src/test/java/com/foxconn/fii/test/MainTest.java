@@ -108,7 +108,7 @@ public class MainTest {
 ////        options.setBinary("")
 //        WebDriver driver = new EdgeDriver(options);
 //
-//        String baseUrl = "https://fiisw.cnsbg.efoxconn.com:6443/";
+//        String baseUrl = "https://fiisw-cns.myfiinet.com/";
 //        String expectedTitle = "Welcome: Mercury Tours";
 //        String actualTitle = "";
 //

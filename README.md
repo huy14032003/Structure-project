@@ -4,7 +4,7 @@
 #### 1.1 Create and clone `new-project`
 Create `new-project` on git and clone it 
 ```
-git clone https://fiisw.cnsbg.efoxconn.com:6443/git/new-project.git
+git clone https://fiisw-cns.myfiinet.com/git/new-project.git
 ```
 
 #### 1.2 Add remote `sample-system`
