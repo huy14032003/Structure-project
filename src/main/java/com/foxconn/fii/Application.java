@@ -50,8 +50,8 @@ public class Application extends SpringBootServletInitializer implements Command
     @Override
     public void run(String... args) throws Exception {
 //        String folderPath = "F:\\agile";
-        String folderPath = "E:\\desktop\\textSOP";
-        sampleService.readTextFromExcel(tmpPath);
+//        String folderPath = "E:\\desktop\\textSOP";
+//        sampleService.readTextFromExcel(tmpPath);
         log.info("### RUN OK");
     }
 

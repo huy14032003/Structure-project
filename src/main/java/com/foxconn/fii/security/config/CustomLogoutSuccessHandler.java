@@ -7,6 +7,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.util.StringUtils;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -25,10 +26,21 @@ public class CustomLogoutSuccessHandler extends AbstractAuthenticationTargetUrlR
 
     @Override
     public void onLogoutSuccess(
-            HttpServletRequest httpServletRequest,
-            HttpServletResponse httpServletResponse,
+            HttpServletRequest request,
+            HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
-        String requestUrl = httpServletRequest.getRequestURL().toString();
+//        for (Cookie cookie : request.getCookies()) {
+//            if ("lang".equalsIgnoreCase(cookie.getName()) || "previous_page".equalsIgnoreCase(cookie.getName())) {
+//                continue;
+//            }
+//
+//            Cookie clearingCookie = new Cookie(cookie.getName(), null);
+//            clearingCookie.setMaxAge(0);
+//            clearingCookie.setPath(clearingCookie.getPath());
+//            response.addCookie(clearingCookie);
+//        }
+
+        String requestUrl = request.getRequestURL().toString();
         String defaultTargetUrl = this.logoutSuccessUrl;
 
         boolean trustFlag = false;
@@ -45,19 +57,19 @@ public class CustomLogoutSuccessHandler extends AbstractAuthenticationTargetUrlR
         }
 
 
-        String redirectUrl = requestUrl.replace(httpServletRequest.getRequestURI(), "");
-        String referer = httpServletRequest.getHeader("referer");
-        String previousPage = CookieUtils.getCookieValue(httpServletRequest, "previous_page");
+        String redirectUrl = requestUrl.replace(request.getRequestURI(), "");
+        String referer = request.getHeader("referer");
+        String previousPage = CookieUtils.getCookieValue(request, "previous_page");
         if (!StringUtils.isEmpty(referer)) {
             redirectUrl = referer;
         } else if (!StringUtils.isEmpty(previousPage)) {
             redirectUrl = redirectUrl + previousPage;
         } else {
-            redirectUrl = redirectUrl + httpServletRequest.getContextPath();
+            redirectUrl = redirectUrl + request.getContextPath();
         }
         defaultTargetUrl = defaultTargetUrl + String.format("?redirectUrl=%s", redirectUrl);
 
         this.setDefaultTargetUrl(defaultTargetUrl);
-        this.handle(httpServletRequest, httpServletResponse, authentication);
+        this.handle(request, response, authentication);
     }
 }

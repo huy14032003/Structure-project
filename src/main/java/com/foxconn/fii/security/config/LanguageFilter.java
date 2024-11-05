@@ -21,7 +21,7 @@ public class LanguageFilter implements Filter {
             HttpServletResponse response = (HttpServletResponse) servletResponse;
 
             if (request.getRequestURI().contains("/login")) {
-                log.debug("### filter language process");
+//                log.debug("### filter language process");
                 String lang = request.getParameter("lang");
                 if (!StringUtils.isEmpty(lang)) {
                     CookieUtils.create(request, response, "lang", lang, 14 * 24 * 60 * 60);
@@ -32,7 +32,13 @@ public class LanguageFilter implements Filter {
                     !request.getRequestURI().contains("/login") &&
                     !request.getRequestURI().contains("/sign-in") &&
                     !request.getRequestURI().contains("/handle-login-success") &&
-                    !request.getServletPath().substring(1).contains("/")) {
+                    !request.getServletPath().contains("/error") &&
+                    !request.getServletPath().contains("/page") &&
+                    !request.getServletPath().contains("/assets") &&
+                    !request.getServletPath().contains("/ws-data") &&
+                    !request.getServletPath().contains("/myjs") &&
+                    !request.getServletPath().contains("/templates") &&
+                    !request.getServletPath().contains("/api")) {
 
                 String url = request.getRequestURI();
                 if (!StringUtils.isEmpty(request.getQueryString())) {

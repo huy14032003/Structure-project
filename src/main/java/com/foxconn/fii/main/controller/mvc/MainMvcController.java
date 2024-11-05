@@ -96,7 +96,7 @@ public class MainMvcController {
                 model.addAttribute("nameVn", currentUser.getName());
                 model.addAttribute("nameCn", currentUser.getChineseName());
             } catch (Exception e) {
-                return "redirect:page-401";
+                return "redirect:/error-401";
             }
         }
 

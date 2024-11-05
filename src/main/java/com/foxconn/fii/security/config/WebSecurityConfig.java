@@ -84,7 +84,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/login**",
                 "/sign-in",
 
-                "/greeting",
+                "/api/greeting",
                 "/api/time/now",
         };
 

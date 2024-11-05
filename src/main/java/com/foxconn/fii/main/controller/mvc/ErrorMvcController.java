@@ -37,24 +37,16 @@ public class ErrorMvcController implements ErrorController {
         HttpStatus status = getStatus(request);
 
         if (status.value() == 401) {
-            model.addAttribute("path", "error-401");
-            model.addAttribute("title", "Error 401");
-            model.addAttribute("error", "Error 401");
+            return "redirect:/error-401";
         } else if (status.value() == 403) {
-            model.addAttribute("path", "error-403");
-            model.addAttribute("title", "Error 403");
-            model.addAttribute("error", "Error 403");
+            return "redirect:/error-403";
         } else if (status.value() == 404) {
-            model.addAttribute("path", "error-404");
-            model.addAttribute("title", "Error 404");
-            model.addAttribute("error", "Error 404");
+            return "redirect:/error-404";
         } else if (status.value() == 500) {
-            model.addAttribute("path", "error-500");
-            model.addAttribute("title", "Error 500");
-            model.addAttribute("error", "Error 500");
+            return "redirect:/error-500";
+        } else {
+            return "redirect:/error-404";
         }
-
-        return "application-error";
     }
 
 
