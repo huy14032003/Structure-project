@@ -1,4 +1,4 @@
-package com.foxconn.fii.security.jwt.model.token;
+package com.foxconn.fii.security.model;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,12 +8,13 @@ import java.util.Collection;
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     private static final long serialVersionUID = 2877954820905567501L;
 
-    private RawToken rawToken;
     private String username;
 
-    public JwtAuthenticationToken(RawToken unsafeToken) {
+    private JwtTokenWrapper jwtTokenWrapper;
+
+    public JwtAuthenticationToken(JwtTokenWrapper unsafeAccessToken) {
         super(null);
-        this.rawToken = unsafeToken;
+        this.jwtTokenWrapper = unsafeAccessToken;
         this.setAuthenticated(false);
     }
 
@@ -24,11 +25,12 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         super.setAuthenticated(true);
     }
 
-    public JwtAuthenticationToken(String unsafeToken, String username, Collection<? extends GrantedAuthority> authorities) {
+    public JwtAuthenticationToken(String unsafeAccessToken, String username, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.eraseCredentials();
-        this.rawToken = new RawToken(unsafeToken);
         this.username = username;
+        this.jwtTokenWrapper = new JwtTokenWrapper();
+        this.jwtTokenWrapper.setAccessToken(unsafeAccessToken);
         super.setAuthenticated(true);
     }
 
@@ -43,7 +45,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getCredentials() {
-        return this.rawToken;
+        return this.jwtTokenWrapper;
     }
 
     @Override
@@ -54,6 +56,6 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     @Override
     public void eraseCredentials() {
         super.eraseCredentials();
-        this.rawToken = null;
+        this.jwtTokenWrapper = null;
     }
 }

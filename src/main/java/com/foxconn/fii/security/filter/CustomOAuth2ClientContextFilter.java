@@ -1,4 +1,4 @@
-package com.foxconn.fii.security.config;
+package com.foxconn.fii.security.filter;
 
 import org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter;
 import org.springframework.security.oauth2.client.resource.UserRedirectRequiredException;

@@ -13,7 +13,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class StateKeyGeneratorWithRedirectUrl extends DefaultStateKeyGenerator {
+public class RedirectUrlStateKeyGenerator extends DefaultStateKeyGenerator {
     private RandomValueStringGenerator generator = new RandomValueStringGenerator();
     private RequestCache requestCache = new HttpSessionRequestCache();
 

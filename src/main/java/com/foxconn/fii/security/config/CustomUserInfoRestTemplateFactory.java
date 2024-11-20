@@ -33,7 +33,7 @@ public class CustomUserInfoRestTemplateFactory extends DefaultUserInfoRestTempla
         OAuth2RestTemplate restTemplate = super.getUserInfoRestTemplate();
         if (trigger) {
             CustomAuthorizationCodeAccessTokenProvider accessTokenProvider = new CustomAuthorizationCodeAccessTokenProvider();
-            accessTokenProvider.setStateKeyGenerator(new StateKeyGeneratorWithRedirectUrl());
+            accessTokenProvider.setStateKeyGenerator(new RedirectUrlStateKeyGenerator());
             accessTokenProvider.setTokenRequestEnhancer(new AcceptJsonRequestEnhancer());
             restTemplate.setAccessTokenProvider(accessTokenProvider);
             trigger = false;

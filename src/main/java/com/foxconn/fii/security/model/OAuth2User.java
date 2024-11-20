@@ -61,4 +61,7 @@ public class OAuth2User {
     private String agent;
 
     private boolean agentFlag;
+
+
+    private String source;
 }

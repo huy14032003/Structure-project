@@ -26,6 +26,8 @@ public class CommonUtils {
         String clientIP = request.getHeader("x-forwarded-for");
         if (StringUtils.isEmpty(clientIP)) {
             clientIP = request.getRemoteAddr();
+        } else if (clientIP.contains(",")) {
+            clientIP = clientIP.split(",")[0];
         }
         return clientIP;
     }

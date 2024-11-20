@@ -1,4 +1,4 @@
-package com.foxconn.fii.security.jwt.config;
+package com.foxconn.fii.security.config;
 
 public class JwtProperties {
     public static final String AUTHENTICATION_HEADER_NAME = "Authorization";

@@ -1,9 +1,9 @@
-package com.foxconn.fii.security.jwt;
+package com.foxconn.fii.security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foxconn.fii.common.response.CommonResponse;
 import com.foxconn.fii.common.response.ResponseCode;
-import com.foxconn.fii.security.exception.JwtExpiredTokenException;
+import com.foxconn.fii.security.exception.JwtTokenExpiredException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,7 +35,7 @@ public class JwtAuthenticationFailureHandler implements AuthenticationFailureHan
 
         if (e instanceof BadCredentialsException) {
             mapper.writeValue(response.getWriter(), CommonResponse.of(HttpStatus.UNAUTHORIZED, ResponseCode.AUTHENTICATION, "Invalid username or password", null));
-        } else if (e instanceof JwtExpiredTokenException) {
+        } else if (e instanceof JwtTokenExpiredException) {
             mapper.writeValue(response.getWriter(), CommonResponse.of(HttpStatus.UNAUTHORIZED, ResponseCode.JWT_TOKEN_EXPIRED, "Token has expired", null));
         }
 

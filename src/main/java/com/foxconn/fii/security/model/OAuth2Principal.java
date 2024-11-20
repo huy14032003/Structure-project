@@ -1,6 +1,5 @@
-package com.foxconn.fii.security.config;
+package com.foxconn.fii.security.model;
 
-import com.foxconn.fii.security.model.OAuth2User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;

@@ -1,4 +1,4 @@
-package com.foxconn.fii.security.jwt.config;
+package com.foxconn.fii.security.config;
 
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.OrRequestMatcher;

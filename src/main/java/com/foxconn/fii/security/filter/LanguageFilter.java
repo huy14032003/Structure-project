@@ -1,4 +1,4 @@
-package com.foxconn.fii.security.config;
+package com.foxconn.fii.security.filter;
 
 import com.foxconn.fii.common.utils.CookieUtils;
 import lombok.extern.slf4j.Slf4j;
