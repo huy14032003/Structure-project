@@ -1,7 +1,11 @@
 package com.foxconn.fii.test;
 
 import com.foxconn.fii.common.exception.CommonException;
+import com.foxconn.fii.main.service.SampleService;
+import com.foxconn.fii.main.service.impl.SampleServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
+//import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -15,6 +19,20 @@ import java.util.regex.Pattern;
 
 @Slf4j
 public class MainTest {
+
+    @Test
+    public void sopTest() {
+        SampleService sampleService = new SampleServiceImpl();
+
+        String folderPath = "C:\\Users\\V0946495.VNGZ\\Desktop\\agile";
+//        String folderPath = "E:\\desktop\\textSOP";
+        sampleService.readTextFromFolder(folderPath);
+
+//        String pdfFile = "C:\\Users\\V0946495.VNGZ\\Desktop\\output\\agile134719924.xlsx.pdf";
+//        String folder = "C:\\Users\\V0946495.VNGZ\\Desktop\\output";
+//        PdfUtils.convertPdfToImage(new File(pdfFile), folder, "");
+
+    }
 
 //    @Test
     public void mainTest() {

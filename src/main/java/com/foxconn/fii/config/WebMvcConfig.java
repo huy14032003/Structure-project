@@ -7,10 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.resource.AppCacheManifestTransformer;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
@@ -53,6 +50,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return lci;
     }
 
+//    @Override
+//    public void configurePathMatch(PathMatchConfigurer configurer) {
+//        configurer.setUseTrailingSlashMatch(true);
+//    }
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/assets/**", "/favicon.ico", "/sitemap*.xml")
@@ -75,7 +77,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry
                 .addMapping("/**")
                 .allowedOrigins("*")
-                .allowCredentials(true)
+                .allowCredentials(false)
                 .allowedMethods("POST", "GET", "PUT", "OPTIONS", "DELETE")
                 .allowedHeaders("X-Requested-With", "Content-Category", "Authorization", "Origin", "Accept", "Access-Control-Request-Method", "Access-Control-Request-Headers");
     }

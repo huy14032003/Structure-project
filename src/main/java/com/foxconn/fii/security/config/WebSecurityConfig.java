@@ -1,6 +1,5 @@
 package com.foxconn.fii.security.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foxconn.fii.security.filter.CustomOAuth2ClientContextFilter;
 import com.foxconn.fii.security.filter.JwtAuthenticationFilter;
 import com.foxconn.fii.security.filter.LanguageFilter;
@@ -12,7 +11,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -28,7 +26,7 @@ import org.springframework.security.web.authentication.preauth.AbstractPreAuthen
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private OAuth2Service oAuth2Service;
+    private OAuth2Service authService;
 
     @Autowired
     private AuthenticationFailureHandler failureHandler;
@@ -52,20 +50,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     protected JwtAuthenticationFilter buildJwtTokenAuthenticationProcessingFilter(String[] securedPaths, String[] ignoredPaths) throws Exception {
         PathRequestMatcher matcher = new PathRequestMatcher(securedPaths, ignoredPaths);
-        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(matcher, failureHandler, oAuth2Service);
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(matcher, failureHandler, authService);
         filter.setAuthenticationManager(authenticationManagerBean());
         return filter;
-    }
-
-    @Bean
-    public JwksProperties loadJwks() throws Exception {
-        ClassPathResource resource = new ClassPathResource("jwks.json");
-        JwksProperties jwks = (new ObjectMapper()).readValue(resource.getInputStream(), JwksProperties.class);
-        for (JwksProperties.Key key : jwks.getKeys()) {
-            key.loadPublicKey();
-        }
-        assert jwks.getKeys().get(0).getPublicKey() != null;
-        return jwks;
     }
 
     @Override
@@ -93,7 +80,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.antMatcher("/**")
                 .authorizeRequests()
                 .antMatchers(ignoredList).permitAll()
-                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security", "/swagger-ui.html").hasAnyRole("OAUTH_ADMIN")
+                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/security", "/swagger-ui.html", "/swagger-ui/index.html").hasAnyRole("OAUTH_ADMIN")
                 .anyRequest().hasAnyRole("OAUTH_USER")
 //                .and().formLogin().loginPage("/sign-in")
 //                .successForwardUrl("/home")
@@ -121,7 +108,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/templates/**",
                 "/WEB-INF/jsp/**",
                 "/error",
-                "/page-**",
+                "/error-**",
                 staticPath + "/public/**"
         );
     }

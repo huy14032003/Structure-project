@@ -2,6 +2,7 @@ package com.foxconn.fii.main.service.impl;
 
 import com.foxconn.fii.common.exception.CommonException;
 import com.foxconn.fii.common.utils.CommonUtils;
+import com.foxconn.fii.common.utils.PdfUtils;
 import com.foxconn.fii.main.data.primary.model.entity.TmpText;
 import com.foxconn.fii.main.data.primary.repository.TmpTextRepository;
 import com.foxconn.fii.main.service.SampleService;
@@ -9,11 +10,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
+import org.apache.xmlbeans.XmlCursor;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTAbsoluteAnchor;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTOneCellAnchor;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,15 +41,7 @@ public class SampleServiceImpl implements SampleService {
     private TmpTextRepository textRepository;
 
     @Override
-    public void readTextFromExcel(String folderPath) {
-        List<String> dictionary = Arrays.asList(
-                "IE", "PQE", "ME",
-                "Foxconn Industrial Internet Co Ltd",
-                "Communication Network Solution Business Group",
-                "COMMUNICATION NETWORK SOLUTION BUSINESS GROUP",
-                "Proprietary information of CNSBG"
-        );
-
+    public void readTextFromFolder(String folderPath) {
         File folder = new File(folderPath);
         if (folder.listFiles() == null) {
             throw CommonException.of("Folder is invalid");
@@ -44,7 +51,7 @@ public class SampleServiceImpl implements SampleService {
             try {
 //        File file = new File("C:\\Users\\V0946495.VNGZ\\Desktop\\textSOP\\English-SOP-NVB1-NV003A2-03  SFG103480 PTHSOP(2K) .xlsx");
                 if (!file.isFile()) {
-                    readTextFromExcel(file.getAbsolutePath());
+                    readTextFromFolder(file.getAbsolutePath());
 //                    continue;
                 }
 
@@ -53,52 +60,251 @@ public class SampleServiceImpl implements SampleService {
                     continue;
                 }
 
-//            log.info("### process file '{}'", file.getName());
+                // read text
+//                readTextFromExcel(file);
 
-                Workbook workbook;
-                try {
-                    workbook = WorkbookFactory.create(file, null, true);
-                } catch (Exception e) {
-//                log.error("### read text error {}", file.getPath()/*, e*/);
-                    continue;
-                }
+                //read image
+                readImageFromExcel(file);
 
-                int totalSheet = workbook.getNumberOfSheets();
-                for (int i = 0; i < totalSheet; i++) {
-                    if (workbook.isSheetHidden(i) || workbook.isSheetVeryHidden(i)) {
-                        continue;
-                    }
-
-                    Sheet sheet = workbook.getSheetAt(i);
-//                log.info("### process sheet '{}'", sheet.getSheetName());
-
-                    List<Map<String, Object>> contentList = new ArrayList<>();
-
-                    Map<Integer, Map<Integer, String>> textMap = processReadText(sheet);
-                    saveRawText(file.getName(), sheet.getSheetName(), "TEXT", textMap);
-                    for (Map.Entry<Integer, Map<Integer, String>> textMapEntry : textMap.entrySet()) {
-                        contentList.addAll(processSplitLanguageText(new ArrayList<>(textMapEntry.getValue().values()), dictionary, false));
-
-                        List<String> mergedTextList = processMergeText(textMapEntry.getValue(), dictionary);
-                        contentList.addAll(processSplitLanguageText(mergedTextList, dictionary, true));
-                    }
-
-                    Map<Integer, Map<Integer, String>> textBoxMap = processReadTextBox(sheet);
-                    saveRawText(file.getName(), sheet.getSheetName(), "TEXT_BOX", textBoxMap);
-                    for (Map.Entry<Integer, Map<Integer, String>> textMapEntry : textBoxMap.entrySet()) {
-                        contentList.addAll(processSplitLanguageText(new ArrayList<>(textMapEntry.getValue().values()), dictionary, false));
-                    }
-
-                    saveText(file.getName(), sheet.getSheetName(), contentList);
-                }
-
-                workbook.close();
             } catch (Exception e) {
                 log.error("### read text from excel error", e);
             }
         }
 
     }
+
+
+    public void readTextFromExcel(File file) {
+//        log.info("### process file '{}'", file.getName());
+
+        List<String> dictionary = Arrays.asList(
+                "IE", "PQE", "ME",
+                "Foxconn Industrial Internet Co Ltd",
+                "Communication Network Solution Business Group",
+                "COMMUNICATION NETWORK SOLUTION BUSINESS GROUP",
+                "Proprietary information of CNSBG"
+        );
+
+        try {
+            Workbook workbook = WorkbookFactory.create(file, null, true);
+
+            int totalSheet = workbook.getNumberOfSheets();
+            for (int i = 0; i < totalSheet; i++) {
+                if (workbook.isSheetHidden(i) || workbook.isSheetVeryHidden(i)) {
+                    continue;
+                }
+
+                Sheet sheet = workbook.getSheetAt(i);
+//                log.info("### process sheet '{}'", sheet.getSheetName());
+
+                List<Map<String, Object>> contentList = new ArrayList<>();
+
+                Map<Integer, Map<Integer, String>> textMap = processReadText(sheet);
+                saveRawText(file.getName(), sheet.getSheetName(), "TEXT", textMap);
+                for (Map.Entry<Integer, Map<Integer, String>> textMapEntry : textMap.entrySet()) {
+                    contentList.addAll(processSplitLanguageText(new ArrayList<>(textMapEntry.getValue().values()), dictionary, false));
+
+                    List<String> mergedTextList = processMergeText(textMapEntry.getValue(), dictionary);
+                    contentList.addAll(processSplitLanguageText(mergedTextList, dictionary, true));
+                }
+
+                Map<Integer, Map<Integer, String>> textBoxMap = processReadTextBox(sheet);
+                saveRawText(file.getName(), sheet.getSheetName(), "TEXT_BOX", textBoxMap);
+                for (Map.Entry<Integer, Map<Integer, String>> textMapEntry : textBoxMap.entrySet()) {
+                    contentList.addAll(processSplitLanguageText(new ArrayList<>(textMapEntry.getValue().values()), dictionary, false));
+                }
+
+                saveText(file.getName(), sheet.getSheetName(), contentList);
+            }
+
+            workbook.close();
+        } catch (Exception e) {
+            log.error("### read text error {}", file.getPath(), e);
+        }
+    }
+
+    public void readImageFromExcel(File file) {
+        log.info("### process file '{}'", file.getName());
+        try {
+            Path filePath = file.toPath();
+            Path tmpPath = Paths.get(filePath.getParent().getParent().toString(), "tmp", filePath.getFileName().toString());
+            Path removeTextFilePath = Paths.get(filePath.getParent().getParent().toString(), "output", filePath.getFileName().toString());
+            Files.copy(filePath, tmpPath, StandardCopyOption.REPLACE_EXISTING);
+
+            Workbook workbook = WorkbookFactory.create(tmpPath.toFile(), null, false);
+            int totalSheet = workbook.getNumberOfSheets();
+
+            FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+
+            for (int i = 0; i < totalSheet; i++) {
+                if (workbook.isSheetHidden(i) || workbook.isSheetVeryHidden(i)) {
+                    continue;
+                }
+
+                Sheet sheet = workbook.getSheetAt(i);
+                for (int j = 0; j < Math.max(sheet.getLastRowNum(), sheet.getPhysicalNumberOfRows()); j++) {
+                    Row row = sheet.getRow(j);
+                    if (row != null) {
+                        for (int k = 0; k < Math.max(row.getLastCellNum(), row.getPhysicalNumberOfCells()); k++) {
+                            Cell cell = row.getCell(k);
+                            if (cell != null) {
+                                cell.setCellStyle(null);
+                                if (cell.getCellType() == CellType.FORMULA) {
+                                    evaluator.evaluateInCell(cell);
+                                }
+                                cell.setBlank();
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < totalSheet; i++) {
+                if (workbook.isSheetHidden(i) || workbook.isSheetVeryHidden(i)) {
+                    continue;
+                }
+
+                Sheet sheet = workbook.getSheetAt(i);
+                removeReadTextBox(sheet);
+            }
+
+            for (int times = 0; times < 3; times++) {
+                int visibleIndex = 0;
+                for (int i = 0; i < totalSheet; i++) {
+                    if (!workbook.isSheetHidden(i) && !workbook.isSheetVeryHidden(i)) {
+                        visibleIndex = i;
+                        break;
+                    }
+                }
+                workbook.removeSheetAt(visibleIndex);
+            }
+
+            workbook.write(new FileOutputStream(removeTextFilePath.toFile()));
+            workbook.close();
+
+            String pdfFile = removeTextFilePath.toString() + ".pdf";
+            convertExcelToPdf(removeTextFilePath.toString(), pdfFile);
+
+            PdfUtils.convertPdfToImage(new File(pdfFile), removeTextFilePath.getParent().toString(), "");
+        } catch (Exception e) {
+            log.error("### read text error {}", file.getPath(), e);
+        }
+    }
+
+    private void removeReadTextBox(Sheet sheet) {
+        if (sheet instanceof XSSFSheet) {
+            XSSFDrawing drawing = (XSSFDrawing) sheet.getDrawingPatriarch();
+            if (drawing != null) {
+                removeXSSFShape(drawing);
+            }
+        } else if (sheet instanceof HSSFSheet) {
+            HSSFPatriarch patriarch = ((HSSFSheet) sheet).getDrawingPatriarch();
+            if (patriarch != null) {
+                removeHSSFShape(patriarch);
+            }
+        }
+    }
+
+    private void removeXSSFShape(ShapeContainer<XSSFShape> container) {
+        for (XSSFShape shape : container) {
+            if (shape instanceof XSSFPicture) {
+                boolean flag = false;
+
+                XSSFClientAnchor anchor = (XSSFClientAnchor)shape.getAnchor();
+                if (anchor != null) {
+                    int r1 = anchor.getRow1();
+                    int r2 = anchor.getRow2();
+                    if (r1 >= 0 && r1 <= 3 || (r2 >= 0 && r2 <= 3)) {
+                        flag = true;
+                    }
+                }
+
+                if (flag) {
+                    XSSFDrawing drawing = shape.getDrawing();
+                    CTPicture ctPicture = ((XSSFPicture) shape).getCTPicture();
+
+                    if (ctPicture.getBlipFill() != null) {
+                        if (ctPicture.getBlipFill().getBlip() != null) {
+                            if (ctPicture.getBlipFill().getBlip().getEmbed() != null) {
+                                String rId = ctPicture.getBlipFill().getBlip().getEmbed();
+                                drawing.getPackagePart().removeRelationship(rId);
+                                try {
+                                    drawing.getPackagePart().getPackage().deletePartRecursive(drawing.getRelationById(rId).getPackagePart().getPartName());
+                                } catch (Exception ignored){}
+                            }
+                        }
+                    }
+
+                    XmlCursor cursor = ctPicture.newCursor();
+                    cursor.toParent();
+                    if (cursor.getObject() instanceof CTTwoCellAnchor) {
+                        for (int i = 0; i < drawing.getCTDrawing().getTwoCellAnchorList().size(); i++) {
+                            if (cursor.getObject().equals(drawing.getCTDrawing().getTwoCellAnchorArray(i))) {
+                                drawing.getCTDrawing().removeTwoCellAnchor(i);
+                            }
+                        }
+                    } else if (cursor.getObject() instanceof CTOneCellAnchor) {
+                        for (int i = 0; i < drawing.getCTDrawing().getOneCellAnchorList().size(); i++) {
+                            if (cursor.getObject().equals(drawing.getCTDrawing().getOneCellAnchorArray(i))) {
+                                drawing.getCTDrawing().removeOneCellAnchor(i);
+                            }
+                        }
+                    } else if (cursor.getObject() instanceof CTAbsoluteAnchor) {
+                        for (int i = 0; i < drawing.getCTDrawing().getAbsoluteAnchorList().size(); i++) {
+                            if (cursor.getObject().equals(drawing.getCTDrawing().getAbsoluteAnchorArray(i))) {
+                                drawing.getCTDrawing().removeAbsoluteAnchor(i);
+                            }
+                        }
+                    }
+                }
+            } else if (shape instanceof XSSFSimpleShape) {
+                String text = ((XSSFSimpleShape) shape).getText();
+                if (text != null) {
+                    if ("CNT's Intellectual property, Confidential".equalsIgnoreCase(text)) {
+                        ((XSSFSimpleShape) shape).setText("");
+                    }
+                }
+            }
+            else if (shape instanceof XSSFShapeGroup) {
+                removeXSSFShape((XSSFShapeGroup) shape);
+            }
+        }
+    }
+
+    private void removeHSSFShape(ShapeContainer<HSSFShape> container) {
+        for (HSSFShape shape : container) {
+            if (shape instanceof HSSFPicture) {
+                boolean flag = false;
+
+                HSSFClientAnchor anchor = ((HSSFPicture) shape).getClientAnchor();
+                if (anchor != null) {
+                    int r1 = anchor.getRow1();
+                    int r2 = anchor.getRow2();
+                    if (r1 >= 0 && r1 <= 3 || (r2 >= 0 && r2 <= 3)) {
+                        flag = true;
+                    }
+                }
+
+                if (flag) {
+                    HSSFPatriarch patriarch = shape.getPatriarch();
+                    patriarch.removeShape(shape);
+                }
+            } else if (shape instanceof HSSFTextbox) {
+                try {
+                    String text = ((HSSFTextbox) shape).getString().toString();
+                    if (text != null) {
+                        if ("CNT's Intellectual property, Confidential".equalsIgnoreCase(text)) {
+                            ((HSSFTextbox) shape).setString(new HSSFRichTextString(""));
+                        }
+                    }
+                } catch (Exception ignored) {}
+            }
+            else if (shape instanceof HSSFShapeGroup) {
+                removeHSSFShape((HSSFShapeGroup) shape);
+            }
+        }
+    }
+
 
     private Map<Integer, Map<Integer, String>> processReadTextBox(Sheet sheet) {
         Map<Integer, Map<Integer, String>> textMap = new TreeMap<>();
@@ -160,6 +366,7 @@ public class SampleServiceImpl implements SampleService {
         return j;
     }
 
+
     private Map<Integer, Map<Integer, String>> processReadText(Sheet sheet) {
         Map<Integer, Map<Integer, String>> textMap = new TreeMap<>();
 
@@ -192,6 +399,7 @@ public class SampleServiceImpl implements SampleService {
 
         return textMap;
     }
+
 
     private String clearText(String text) {
         text = addSpaceBetweenChineseTextAndNonChineseText(text);
@@ -241,6 +449,8 @@ public class SampleServiceImpl implements SampleService {
     }
 
     private List<String> processMergeText(Map<Integer, String> textMap, List<String> dictionary) {
+        Pattern linePattern = Pattern.compile("^\\d+\\s*\\.\\s*.+$");
+
         List<String> mergedTextList = new ArrayList<>();
 
         Integer prevRow = -1;
@@ -279,7 +489,7 @@ public class SampleServiceImpl implements SampleService {
                     }
                     prevText = content;
                 } else {
-                    prevText += content;
+                    prevText += (linePattern.matcher(content).matches() ? "<br/>" : "") + content;
                 }
                 langFlag = 1;
                 prevRow = row;
@@ -290,7 +500,7 @@ public class SampleServiceImpl implements SampleService {
                     }
                     prevText = content;
                 } else {
-                    prevText += " " + content;
+                    prevText += (linePattern.matcher(content).matches() ? "<br/>" : "") + content;
                 }
                 langFlag = 2;
                 prevRow = row;
@@ -301,7 +511,7 @@ public class SampleServiceImpl implements SampleService {
                     }
                     prevText = content;
                 } else {
-                    prevText += " " + content;
+                    prevText += (linePattern.matcher(content).matches() ? "<br/>" : "") + content;
                 }
                 langFlag = 0;
                 prevRow = row;
@@ -420,15 +630,40 @@ public class SampleServiceImpl implements SampleService {
                     (!StringUtils.isEmpty(enText) && !StringUtils.isEmpty(vnText) && enText.split(" ").length >= 5 && vnText.split(" ").length >= 5) ||
                             (!StringUtils.isEmpty(cnText) && !StringUtils.isEmpty(vnText) && cnText.length() >= 5 && vnText.split(" ").length >= 5)) {
 //                log.info("### \"{}\"\t\"{}\"\t\"{}\"\t\"{}\"\t\"{}\"\t\"{}\"", cnText, enText, vnText, contentMap.getOrDefault("checkFlag", 0), file, sheet);
-                log.info("### \"{}\"\t\"{}\"\t\"{}\"", cnText, enText, vnText);
+//                log.info("### \"{}\"\t\"{}\"\t\"{}\"", cnText, enText, vnText);
 
-                TmpText text = new TmpText();
-                text.setCnText(cnText);
-                text.setEnText(enText);
-                text.setVnText(vnText);
-                text.setFileName(file);
-                text.setSheetName(sheet);
-                textRepository.save(text);
+                boolean saveFlag = false;
+                if (vnText.contains("<br/>")) {
+                    String[] vnTexts = vnText.split("<br/>");
+                    String[] cnTexts = cnText.split("<br/>");
+                    String[] enTexts = enText.split("<br/>");
+                    if (vnTexts.length == cnTexts.length || vnTexts.length == enTexts.length) {
+                        for (int i = 0; i < vnTexts.length; i++) {
+                            TmpText text = new TmpText();
+                            text.setVnText(vnTexts[i]);
+                            text.setCnText(i < cnTexts.length ? cnTexts[i] : "");
+                            text.setEnText(i < enTexts.length ? enTexts[i] : "");
+                            text.setFileName(file);
+                            text.setSheetName(sheet);
+
+//                            log.info("### {}", text);
+                            textRepository.save(text);
+                        }
+                        saveFlag = true;
+                    }
+                }
+
+                if (!saveFlag) {
+                    TmpText text = new TmpText();
+                    text.setCnText(cnText);
+                    text.setEnText(enText);
+                    text.setVnText(vnText);
+                    text.setFileName(file);
+                    text.setSheetName(sheet);
+
+//                    log.info("### {}", text);
+                    textRepository.save(text);
+                }
             }
         }
     }
@@ -564,4 +799,57 @@ public class SampleServiceImpl implements SampleService {
         return matcher.replaceAll("$1 $2");
     }
 
+
+    public boolean convertExcelToPdf(String inputFilePath, String outputFilePath) {
+        try {
+            List<String> command = Arrays.asList(
+                    "powershell.exe",
+                    "-ExecutionPolicy",
+                    "Bypass",
+                    "-File",
+                    "E:\\ESOP\\libs\\excel2pdf.ps1",
+                    "-InputFilePath",
+                    inputFilePath,
+                    "-OutputFilePath",
+                    outputFilePath
+            );
+
+            ProcessBuilder processBuilder = new ProcessBuilder(command);
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+
+            StringBuilder output = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader((new InputStreamReader(process.getInputStream())))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    output.append(line).append("\n");
+                }
+            }
+
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                log.debug("### convertExcelToPdf {}", output.toString());
+            } else {
+                log.error("### convertExcelToPdf error {}", output.toString());
+                return false;
+            }
+
+        } catch (Exception e) {
+            log.error("### convertExcelToPdf error", e);
+            return false;
+        }
+        return true;
+    }
+
+
+    @Cacheable(value = "exampleCache", key = "#limit")
+    public List<String> generateList(int limit) {
+        log.debug("### generate list {}", limit);
+        List<String> list = new ArrayList<>();
+        Random random = new SecureRandom();
+        for (int i=0; i<limit; i++) {
+            list.add(String.valueOf(random.nextInt(limit)));
+        }
+        return list;
+    }
 }

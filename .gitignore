@@ -1,6 +1,7 @@
 ### custom ###
 /logs/
 /ws-data/
+/cache/
 
 ### default ###
 /target/

@@ -15,6 +15,7 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/catalina.log</file>
         <encoder>
+            <charset>UTF-8</charset>
             <Pattern>${FILE_LOG_PATTERN}</Pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -29,6 +30,7 @@
         </filter>
         <file>${LOG_PATH}/error.log</file>
         <encoder>
+            <charset>UTF-8</charset>
             <Pattern>${FILE_LOG_PATTERN}</Pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">

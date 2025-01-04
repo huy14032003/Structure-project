@@ -27,10 +27,11 @@ public class SwaggerConfig {
                 .build()
                 .globalOperationParameters(Collections.singletonList(new ParameterBuilder()
                         .name("Authorization")
-                        .modelRef(new ModelRef("String"))
+                        .modelRef(new ModelRef("string"))
                         .parameterType("header")
                         .defaultValue("Bearer ")
-                        .required(false)
-                        .build()));
+                        .required(true)
+                        .build()))
+                        ;
     }
 }

@@ -180,6 +180,9 @@
         <div class="col-sm-12">
             HOME PAGE
         </div>
+        <div>
+            <img src="https://vnfii-security-cns.myfiinet.com/ws-data/image/2024/11/7/439c23e085e048229816c0cccd174d77.jpg" class="img-preview" alt="img">
+        </div>
     </div>
 
     <script>

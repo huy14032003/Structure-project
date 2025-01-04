@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,7 +29,7 @@ public class ErrorMvcController implements ErrorController {
         return serverProperties.getError().getPath();
     }
 
-    @RequestMapping(value = "/error", method = RequestMethod.GET)
+    @RequestMapping(value = "/error")
     public String errorPage(HttpServletRequest request,
                             HttpServletResponse response,
                             Model model) {
@@ -50,7 +49,7 @@ public class ErrorMvcController implements ErrorController {
     }
 
 
-    @RequestMapping(value = "/error-401", method = RequestMethod.GET)
+    @RequestMapping(value = "/error-401")
     public String error401(Model model) {
         model.addAttribute("path", "error-401");
         model.addAttribute("title", "Error 401");
@@ -59,7 +58,7 @@ public class ErrorMvcController implements ErrorController {
         return "application-error";
     }
 
-    @RequestMapping(value = "/error-403", method = RequestMethod.GET)
+    @RequestMapping(value = "/error-403")
     public String error403(Model model) {
         model.addAttribute("path", "error-403");
         model.addAttribute("title", "Error 403");
@@ -68,7 +67,7 @@ public class ErrorMvcController implements ErrorController {
         return "application-error";
     }
 
-    @RequestMapping(value = "/error-404", method = RequestMethod.GET)
+    @RequestMapping(value = "/error-404")
     public String error404(Model model) {
         model.addAttribute("path", "error-404");
         model.addAttribute("title", "Error 404");
@@ -77,7 +76,7 @@ public class ErrorMvcController implements ErrorController {
         return "application-error";
     }
 
-    @RequestMapping(value = "/error-500", method = RequestMethod.GET)
+    @RequestMapping(value = "/error-500")
     public String error500(Model model) {
         model.addAttribute("path", "error-500");
         model.addAttribute("title", "Error 500");

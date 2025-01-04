@@ -15,6 +15,7 @@ import io.jsonwebtoken.Jws;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -32,6 +33,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.annotation.PostConstruct;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,9 @@ import static com.foxconn.fii.security.config.JwtProperties.*;
 @Service
 public class OAuth2ServiceImpl implements OAuth2Service {
 
+    private JwksProperties jwksProperties;
+
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -50,10 +55,18 @@ public class OAuth2ServiceImpl implements OAuth2Service {
     private OAuth2Properties oauth2Properties;
 
     @Autowired
-    private JwksProperties jwksProperties;
-
-    @Autowired
     private ObjectMapper objectMapper;
+
+
+    @PostConstruct
+    public void loadJwks() throws Exception {
+        ClassPathResource resource = new ClassPathResource("jwks.json");
+        jwksProperties = (new ObjectMapper()).readValue(resource.getInputStream(), JwksProperties.class);
+        for (JwksProperties.Key key : jwksProperties.getKeys()) {
+            key.loadPublicKey();
+        }
+        assert jwksProperties.getKeys().get(0).getPublicKey() != null;
+    }
 
 
     @Override
@@ -193,6 +206,9 @@ public class OAuth2ServiceImpl implements OAuth2Service {
         }
 
         String username = (String) claims.getBody().get("user_name");
+        if (StringUtils.isEmpty(username)) {
+            username = (String) claims.getBody().get("client_id");
+        }
         Object rawAuthorities = claims.getBody().get("authorities");
 
         if (!(rawAuthorities instanceof List)) {

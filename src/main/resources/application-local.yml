@@ -10,6 +10,7 @@ server:
     session:
       cookie:
         name: SAMPLE_SESSION
+        path: /
       timeout: 60m
     jsp.init-parameters.mappedfile: false
 
@@ -70,6 +71,7 @@ spring:
     #    properties.hibernate.format_sql: true
     properties.hibernate.use_nationalized_character_data: true
   mvc:
+    pathmatch.matching-strategy: ant_path_matcher
     view:
       prefix: /WEB-INF/jsp/
       suffix: .jsp
@@ -83,11 +85,18 @@ spring:
     port: 5672
     username: rabbitmq
     password: Foxconn168!!
+    connection-timeout: 5000
+    template:
+      reply-timeout: 5000
   servlet:
     multipart:
       enabled: true
       max-file-size: 32MB
       max-request-size: 64MB
+  cache:
+#    type: ehcache
+    jcache:
+      config: classpath:ehcache.xml
 
 # cron
 batch:
