@@ -47,6 +47,9 @@ public class CommonApiController {
     @Value("${server.servlet.static-path}")
     private String staticPath;
 
+    @Value("${server.mode}")
+    private String serverMode;
+
 
     @GetMapping("/api/greeting")
     public String greeting(HttpServletRequest request, Locale locale) {
@@ -59,6 +62,11 @@ public class CommonApiController {
         SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Calendar calendar = Calendar.getInstance();
         return df.format(calendar.getTime());
+    }
+
+    @GetMapping("/api/health/check")
+    public String getHealthCheck() {
+        return serverMode;
     }
 
     /**

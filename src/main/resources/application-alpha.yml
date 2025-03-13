@@ -1,5 +1,6 @@
 # port
 server:
+  mode: primary
   http.port: 8000
   port: 18000
   domains: >
@@ -13,6 +14,7 @@ server:
         name: SAMPLE_SESSION
         path: /
       timeout: 30m
+    jsp.init-parameters.mappedfile: false
   ssl:
     key-store: D:\tiennd\app\Apache24\conf\ssl\fiisw_cnsbg_efoxconn_com.pfx
     key-store-password: Foxconn168!!

@@ -8,9 +8,17 @@ import com.foxconn.fii.main.data.primary.repository.TmpTextRepository;
 import com.foxconn.fii.main.service.SampleService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTAbsoluteAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTOneCellAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
@@ -150,7 +158,9 @@ public class SampleServiceImpl implements SampleService {
                             if (cell != null) {
                                 cell.setCellStyle(null);
                                 if (cell.getCellType() == CellType.FORMULA) {
-                                    evaluator.evaluateInCell(cell);
+                                    try {
+                                        evaluator.evaluateInCell(cell);
+                                    } catch (Exception ingored) {}
                                 }
                                 cell.setBlank();
                             }
@@ -168,7 +178,7 @@ public class SampleServiceImpl implements SampleService {
                 removeReadTextBox(sheet);
             }
 
-            for (int times = 0; times < 3; times++) {
+            for (int times = 0; times < totalSheet && times < 3; times++) {
                 int visibleIndex = 0;
                 for (int i = 0; i < totalSheet; i++) {
                     if (!workbook.isSheetHidden(i) && !workbook.isSheetVeryHidden(i)) {
@@ -183,7 +193,7 @@ public class SampleServiceImpl implements SampleService {
             workbook.close();
 
             String pdfFile = removeTextFilePath.toString() + ".pdf";
-            convertExcelToPdf(removeTextFilePath.toString(), pdfFile);
+//            convertExcelToPdf(removeTextFilePath.toString(), pdfFile);
 
             PdfUtils.convertPdfToImage(new File(pdfFile), removeTextFilePath.getParent().toString(), "");
         } catch (Exception e) {
@@ -195,17 +205,21 @@ public class SampleServiceImpl implements SampleService {
         if (sheet instanceof XSSFSheet) {
             XSSFDrawing drawing = (XSSFDrawing) sheet.getDrawingPatriarch();
             if (drawing != null) {
-                removeXSSFShape(drawing);
+                removeXSSFShape(sheet, drawing, null);
             }
         } else if (sheet instanceof HSSFSheet) {
             HSSFPatriarch patriarch = ((HSSFSheet) sheet).getDrawingPatriarch();
             if (patriarch != null) {
-                removeHSSFShape(patriarch);
+                removeHSSFShape(sheet, patriarch);
             }
         }
     }
 
-    private void removeXSSFShape(ShapeContainer<XSSFShape> container) {
+    private void removeXSSFShape(Sheet sheet, ShapeContainer<XSSFShape> container, XSSFShape root) {
+//        List<String> ignoredList = Arrays.asList("CTQ");
+        float contentWidth = getSheetWidthInPixels(sheet);
+        float contentHeight = getSheetHeightInPixels(sheet);
+
         for (XSSFShape shape : container) {
             if (shape instanceof XSSFPicture) {
                 boolean flag = false;
@@ -214,7 +228,7 @@ public class SampleServiceImpl implements SampleService {
                 if (anchor != null) {
                     int r1 = anchor.getRow1();
                     int r2 = anchor.getRow2();
-                    if (r1 >= 0 && r1 <= 3 || (r2 >= 0 && r2 <= 3)) {
+                    if (r1 >= 0 && r1 <= 2 || (r2 >= 0 && r2 <= 2)) {
                         flag = true;
                     }
                 }
@@ -258,20 +272,142 @@ public class SampleServiceImpl implements SampleService {
                     }
                 }
             } else if (shape instanceof XSSFSimpleShape) {
-                String text = ((XSSFSimpleShape) shape).getText();
-                if (text != null) {
-                    if ("CNT's Intellectual property, Confidential".equalsIgnoreCase(text)) {
-                        ((XSSFSimpleShape) shape).setText("");
+                if (shape.getAnchor() instanceof XSSFClientAnchor) {
+                    XSSFClientAnchor anchor = (XSSFClientAnchor)shape.getAnchor();
+                    if (anchor != null) {
+                        // 96 dpi
+                        float a4Width = 793;
+                        float a4Height = 1123;
+//                        float letterWidth = 816;
+//                        float letterHeight = 1056;
+
+                        float pageWidth = sheet.getPrintSetup().getLandscape() ? a4Height : a4Width;
+                        float pageHeight = sheet.getPrintSetup().getLandscape() ? a4Width : a4Height;
+//                        float pageWidth = sheet.getPrintSetup().getLandscape() ? letterHeight : letterWidth;
+//                        float pageHeight = sheet.getPrintSetup().getLandscape() ? letterWidth : letterHeight;
+
+//                        float scale = Math.round(Math.floor(Math.min(pageWidth / contentWidth, pageHeight / contentHeight) * 100)) / 100.0f;
+                        float scale = sheet.getPrintSetup().getScale() / 100.0f;
+
+//                        float horizontalShift = (pageWidth - contentWidth * scale * 6830f / 6375f) / 2;
+//                        float verticalShift = (pageHeight - contentHeight * scale * 4805f / 4920f) / 2;
+                        float horizontalShift = 0;
+                        float verticalShift = 0;
+
+                        // tỉ lệ tương đối giữa offset dx và 1024, dy và 256
+                        float textBoxX = anchor.getDx1() / 9525.0f + getSheetWidthInPixels(sheet, anchor.getCol1() - 1);
+                        float textBoxY = anchor.getDy1() / 9525.0f + getSheetHeightInPixels(sheet, anchor.getRow1() - 1);
+
+                        float textBoxX2 = anchor.getDx2() / 9525.0f + getSheetWidthInPixels(sheet, anchor.getCol2() - 1);
+                        float textBoxY2 = anchor.getDy2() / 9525.0f +  + getSheetHeightInPixels(sheet, anchor.getRow2() - 1);
+
+                        float textBoxPDFX = textBoxX * scale;
+                        float textBoxPDFY = textBoxY * scale;
+
+                        float textBoxPDFX2 = textBoxX2 * scale;
+                        float textBoxPDFY2 = textBoxY2 * scale;
+
+                        int textBoxImageX = Math.round(textBoxPDFX / 96 * 600/* * 6830f / 6375f*/ + horizontalShift / 96 * 600);
+                        int textBoxImageY = Math.round(textBoxPDFY / 96 * 600/* * 4805f / 4920f*/ + verticalShift / 96 * 600);
+
+                        int textBoxImageX2 = Math.round(textBoxPDFX2 / 96 * 600/* * 6830f / 6375f*/ + horizontalShift / 96 * 600);
+                        int textBoxImageY2 = Math.round(textBoxPDFY2 / 96 * 600/* * 4805f / 4920f*/ + verticalShift / 96 * 600);
+
+                        try {
+                            log.debug("{} {} {} {} {} {} {} {}", sheet.getSheetName(), ((XSSFSimpleShape) shape).getText(), anchor.getRow1(), anchor.getCol1(), textBoxImageX, textBoxImageY, textBoxImageX2, textBoxImageY2);
+                        } catch (Exception ignored) {}
                     }
+                } else if (shape.getAnchor() == null && root != null) {
+//                    readDrawingXML((XSSFSimpleShape) shape);
+                    XSSFClientAnchor anchor = (XSSFClientAnchor)root.getAnchor();
+                    if (anchor != null) {
+                        CTPoint2D offset = ((XSSFSimpleShape)shape).getCTShape().getSpPr().getXfrm().getOff();
+                        CTPositiveSize2D ext = ((XSSFSimpleShape)shape).getCTShape().getSpPr().getXfrm().getExt();
+
+                        // 96 dpi
+                        float a4Width = 793;
+                        float a4Height = 1123;
+//                        float letterWidth = 816;
+//                        float letterHeight = 1056;
+
+                        float pageWidth = sheet.getPrintSetup().getLandscape() ? a4Height : a4Width;
+                        float pageHeight = sheet.getPrintSetup().getLandscape() ? a4Width : a4Height;
+//                        float pageWidth = sheet.getPrintSetup().getLandscape() ? letterHeight : letterWidth;
+//                        float pageHeight = sheet.getPrintSetup().getLandscape() ? letterWidth : letterHeight;
+
+//                        float scale = Math.round(Math.floor(Math.min(pageWidth / contentWidth, pageHeight / contentHeight) * 100)) / 100.0f;
+                        float scale = sheet.getPrintSetup().getScale() / 100.0f;
+
+//                        float horizontalShift = (pageWidth - contentWidth * scale * 6830f / 6375f) / 2;
+//                        float verticalShift = (pageHeight - contentHeight * scale * 4805f / 4920f) / 2;
+                        float horizontalShift = 0;
+                        float verticalShift = 0;
+
+                        // tỉ lệ tương đối giữa offset dx và 1024, dy và 256
+                        float textBoxX = anchor.getDx1() / 9525.0f + getSheetWidthInPixels(sheet, anchor.getCol1() - 1)/* + (offset.getX() / 9525.0f)*/;
+                        float textBoxY = anchor.getDy1() / 9525.0f + getSheetHeightInPixels(sheet, anchor.getRow1() - 1)/* + (offset.getY() / 9525.0f)*/;
+
+                        float textBoxPDFX = (textBoxX * scale);
+                        float textBoxPDFY = (textBoxY * scale);
+
+                        int textBoxImageX = Math.round(textBoxPDFX / 96 * 600/* * 6830f / 6375f*/ + horizontalShift / 96 * 600);
+                        int textBoxImageY = Math.round(textBoxPDFY / 96 * 600/* * 4805f / 4920f*/ + verticalShift / 96 * 600);
+
+                        try {
+                            log.debug("{} {} {} {} {} {} {} {}", sheet.getSheetName(), ((XSSFSimpleShape) shape).getText(), anchor.getRow1(), anchor.getCol1(), textBoxImageX, textBoxImageY, ext.getCx() / 9525, ext.getCy() / 9525);
+                        } catch (Exception ignored) {}
+                    }
+                }
+
+                if (((XSSFSimpleShape) shape).getShapeType() == 2 || ((XSSFSimpleShape) shape).getShapeType() == 5) {
+                    try {
+                        CTShapeProperties properties = ((XSSFSimpleShape) shape).getCTShape().getSpPr();
+                        if (properties.getNoFill() != null) {
+                            ((XSSFSimpleShape) shape).setText("");
+                        } else if (properties.getSolidFill() != null) {
+//                            if (properties.getSolidFill().getSysClr() != null) {
+//                                byte[] color = properties.getSolidFill().getSysClr().getLastClr();
+//                                if ("#ffffff".equalsIgnoreCase(String.format("#%02X%02X%02X", color[0], color[1], color[2]))) {
+//                                    ((XSSFSimpleShape) shape).setText("");
+//                                }
+//                            } else if (properties.getSolidFill().getSrgbClr() != null) {
+//                                byte[] color = properties.getSolidFill().getSrgbClr().getVal();
+//                                if ("#ffffff".equalsIgnoreCase(String.format("#%02X%02X%02X", color[0], color[1], color[2]))) {
+//                                    ((XSSFSimpleShape) shape).setText("");
+//                                }
+//                            } else
+                            if (properties.getSolidFill().getSchemeClr() != null) {
+                                STSchemeColorVal.Enum color = properties.getSolidFill().getSchemeClr().getVal();
+                                if (color == STSchemeColorVal.LT_1) {
+                                    ((XSSFSimpleShape) shape).setText("");
+                                    if (properties.isSetLn()) {
+                                        properties.unsetLn();
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception ignored) {}
+//                    XSSFDrawing drawing = shape.getDrawing();
+//                    drawing.getShapes().remove(shape);
+
+//                    String text = ((XSSFSimpleShape) shape).getText();
+//                    if (!StringUtils.isEmpty(text) && !text.matches("[H]*\\d+") && ignoredList.contains(text.toUpperCase())) {
+//                        ((XSSFSimpleShape) shape).setText("");
+//                        CTShapeProperties properties = ((XSSFSimpleShape) shape).getCTShape().getSpPr();
+//                        if (properties.isSetLn()) {
+//                            properties.unsetLn();
+//                        }
+//                    }
                 }
             }
             else if (shape instanceof XSSFShapeGroup) {
-                removeXSSFShape((XSSFShapeGroup) shape);
+                removeXSSFShape(sheet, (XSSFShapeGroup) shape, root == null ? shape : root);
             }
         }
     }
 
-    private void removeHSSFShape(ShapeContainer<HSSFShape> container) {
+    private void removeHSSFShape(Sheet sheet, ShapeContainer<HSSFShape> container) {
+//        List<String> ignoredList = Arrays.asList("OK", "NG", "PASS", "FAIL");
         for (HSSFShape shape : container) {
             if (shape instanceof HSSFPicture) {
                 boolean flag = false;
@@ -280,7 +416,7 @@ public class SampleServiceImpl implements SampleService {
                 if (anchor != null) {
                     int r1 = anchor.getRow1();
                     int r2 = anchor.getRow2();
-                    if (r1 >= 0 && r1 <= 3 || (r2 >= 0 && r2 <= 3)) {
+                    if (r1 >= 0 && r1 <= 2 || (r2 >= 0 && r2 <= 2)) {
                         flag = true;
                     }
                 }
@@ -289,22 +425,156 @@ public class SampleServiceImpl implements SampleService {
                     HSSFPatriarch patriarch = shape.getPatriarch();
                     patriarch.removeShape(shape);
                 }
-            } else if (shape instanceof HSSFTextbox) {
-                try {
-                    String text = ((HSSFTextbox) shape).getString().toString();
-                    if (text != null) {
-                        if ("CNT's Intellectual property, Confidential".equalsIgnoreCase(text)) {
-                            ((HSSFTextbox) shape).setString(new HSSFRichTextString(""));
+            } else if (shape instanceof HSSFSimpleShape) {
+                if (shape.getAnchor() instanceof HSSFClientAnchor) {
+                    HSSFClientAnchor anchor = (HSSFClientAnchor) shape.getAnchor();
+                    boolean flag = false;
+                    if (anchor != null) {
+                        int r1 = anchor.getRow1();
+                        int r2 = anchor.getRow2();
+                        int c1 = anchor.getCol1();
+                        int c2 = anchor.getCol2();
+
+                        int dx1 = anchor.getDx1();
+                        int dx2 = anchor.getDx2();
+                        int dy1 = anchor.getDy1();
+                        int dy2 = anchor.getDy2();
+
+                        // 96 dpi
+                        float a4Width = 793;
+                        float a4Height = 1123;
+                        float letterWidth = 816;
+                        float letterHeight = 1056;
+
+//                        float pageWidth = sheet.getPrintSetup().getLandscape() ? a4Height : a4Width;
+//                        float pageHeight = sheet.getPrintSetup().getLandscape() ? a4Width : a4Height;
+                        float pageWidth = sheet.getPrintSetup().getLandscape() ? letterHeight : letterWidth;
+                        float pageHeight = sheet.getPrintSetup().getLandscape() ? letterWidth : letterHeight;
+
+                        float contentWidth = getSheetWidthInPixels(sheet);
+                        float contentHeight = getSheetHeightInPixels(sheet);
+
+//                        float scale = Math.round(Math.floor(Math.min(pageWidth / contentWidth, pageHeight / contentHeight) * 100)) / 100.0f;
+                        float scale = sheet.getPrintSetup().getScale() / 100.0f;
+
+//                        float horizontalShift = (pageWidth - contentWidth * scale) / 2;
+//                        float verticalShift = (pageHeight - contentHeight * scale) / 2;
+                        float horizontalShift = 0;
+                        float verticalShift = 0;
+
+                        // tỉ lệ tương đối giữa offset dx và 1024, dy và 256
+                        float textBoxX = anchor.getDx1() / 1024f * getColumnWidth(sheet, anchor.getCol1()) + getSheetWidthInPixels(sheet, anchor.getCol1() - 1);
+                        float textBoxY = anchor.getDy1() / 256f * getRowHeight(sheet, anchor.getRow1()) + getSheetHeightInPixels(sheet, anchor.getRow1() - 1);
+
+                        float textBoxX2 = getColumnWidth(sheet, anchor.getCol2()) - anchor.getDx2() / 1024f * getColumnWidth(sheet, anchor.getCol2()) + getSheetWidthInPixels(sheet, anchor.getCol2() - 1);
+                        float textBoxY2 = getRowHeight(sheet, anchor.getRow2()) - anchor.getDy2() / 256f * getRowHeight(sheet, anchor.getRow2()) + getSheetHeightInPixels(sheet, anchor.getRow2() - 1);
+
+                        float textBoxPDFX = (textBoxX * scale) + horizontalShift;
+                        float textBoxPDFY = (textBoxY * scale) + verticalShift;
+
+                        float textBoxPDFX2 = (textBoxX2 * scale) + horizontalShift;
+                        float textBoxPDFY2 = (textBoxY2 * scale) + verticalShift;
+
+                        int textBoxImageX = Math.round(textBoxPDFX / 96 * 600 * 6830f / 6375f);
+                        int textBoxImageY = Math.round(textBoxPDFY / 96 * 600 * 6830f / 6375f);
+
+                        int textBoxImageX2 = Math.round(textBoxPDFX2 / 96 * 600 * 6830f / 6375f);
+                        int textBoxImageY2 = Math.round(textBoxPDFY2 / 96 * 600 * 6830f / 6375f);
+
+                        try {
+                            log.debug("{} {} {} {} {} {} {} {}", sheet.getSheetName(), ((HSSFSimpleShape) shape).getString().toString(), anchor.getRow1(), anchor.getCol1(), textBoxImageX, textBoxImageY, textBoxImageX2, textBoxImageY2);
+                        } catch (Exception ignored) {}
+
+                        if (r1 >= 0 && r1 <= 3 || (r2 >= 0 && r2 <= 3)) {
+                            flag = true;
                         }
                     }
-                } catch (Exception ignored) {}
+                } else if (shape.getAnchor() instanceof HSSFChildAnchor) {
+                    HSSFChildAnchor anchor = (HSSFChildAnchor) shape.getAnchor();
+                    boolean flag = false;
+                    if (anchor != null) {
+                        int dx1 = anchor.getDx1();
+                        int dx2 = anchor.getDx2();
+                        int dy1 = anchor.getDy1();
+                        int dy2 = anchor.getDy2();
+
+                        float textBoxX = anchor.getDx1() / 1024f;
+                        float textBoxY = anchor.getDy1() / 256f;
+                    }
+                }
+
+                if (((HSSFSimpleShape) shape).getShapeType() == 2 || ((HSSFSimpleShape) shape).getShapeType() == 5) {
+                    try {
+                        int colorIndex = ((HSSFSimpleShape) shape).getFillColor();
+                        if (colorIndex == 16777215) {
+                            ((HSSFSimpleShape) shape).setString(new HSSFRichTextString(""));
+                            ((HSSFSimpleShape) shape).setLineStyleColor(255, 255, 255);
+                            ((HSSFSimpleShape) shape).setLineStyle(HSSFShape.LINESTYLE_NONE);
+                        }
+                    } catch (Exception ignored) {}
+//                    XSSFDrawing drawing = shape.getDrawing();
+//                    drawing.getShapes().remove(shape);
+
+//                    String text = ((HSSFSimpleShape) shape).getString().toString();
+//                    if (!StringUtils.isEmpty(text) && !text.matches("[H]*\\d+") && ignoredList.contains(text.toUpperCase())) {
+//                        ((HSSFSimpleShape) shape).setString(new HSSFRichTextString(""));
+//                        ((HSSFSimpleShape) shape).setLineStyleColor(255, 255, 255);
+//                        ((HSSFSimpleShape) shape).setLineStyle(HSSFShape.LINESTYLE_NONE);
+//                    }
+                }
             }
             else if (shape instanceof HSSFShapeGroup) {
-                removeHSSFShape((HSSFShapeGroup) shape);
+                removeHSSFShape(sheet, (HSSFShapeGroup) shape);
             }
         }
     }
 
+    private void readDrawingXML(XSSFSimpleShape shape) {
+        try {
+            XSSFDrawing drawing = shape.getDrawing();
+            if (drawing == null) {
+                return;
+            }
+
+            XmlObject xmlObject = drawing.getCTDrawing();
+            XmlCursor cursor = xmlObject.newCursor();
+
+            while (cursor.hasNextToken()) {
+                cursor.toNextToken();
+                if (cursor.isStart() && cursor.getName().getLocalPart().equals("sp")) {
+                    XmlCursor spCursor = cursor.newCursor();
+                    while (spCursor.hasNextToken()) {
+                        spCursor.toNextToken();
+                        if (spCursor.isStart() && spCursor.getName().getLocalPart().equals("cNvPr")) {
+                            String id = spCursor.getAttributeText(new javax.xml.namespace.QName("id"));
+                            if (String.valueOf(shape.getShapeId()).equals(id)) {
+                                while (cursor.hasNextToken()) {
+                                    cursor.toNextToken();
+                                    if (cursor.isStart() && cursor.getName().getLocalPart().equals("xfrm")) {
+                                        XmlCursor xfrmCursor = cursor.newCursor();
+                                        while (xfrmCursor.hasNextToken()) {
+                                            xfrmCursor.toNextToken();
+                                            if (xfrmCursor.isStart() && xfrmCursor.getName().getLocalPart().equals("off")) {
+                                                String x = xfrmCursor.getAttributeText(new javax.xml.namespace.QName("x"));
+                                                String y = xfrmCursor.getAttributeText(new javax.xml.namespace.QName("y"));
+                                                log.debug("{} - {}", Integer.parseInt(x) / 9525, Integer.parseInt(y) / 9525);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+//                            cNvPrCursor.
+                        }
+                    }
+                    spCursor.dispose();
+                }
+            }
+
+            cursor.dispose();
+        } catch (Exception e) {
+            log.error("### readDrawingXML error", e);
+        }
+    }
 
     private Map<Integer, Map<Integer, String>> processReadTextBox(Sheet sheet) {
         Map<Integer, Map<Integer, String>> textMap = new TreeMap<>();
@@ -800,6 +1070,98 @@ public class SampleServiceImpl implements SampleService {
     }
 
 
+    private float getSheetWidthInPixels(Sheet sheet) {
+        int sc = 0;
+        int ec = sheet.getRow(0).getLastCellNum();
+
+        String printArea = sheet.getWorkbook().getPrintArea(sheet.getWorkbook().getSheetIndex(sheet));
+        if (!StringUtils.isEmpty(printArea)) {
+            AreaReference areaRef = new AreaReference(printArea, sheet.getWorkbook().getSpreadsheetVersion());
+            CellReference topleft = areaRef.getFirstCell();
+            CellReference bottomright = areaRef.getLastCell();
+            sc = topleft.getCol();
+            ec = bottomright.getCol();
+        }
+
+        return getSheetWidthInPixels(sheet, sc, ec);
+    }
+
+    private float getSheetHeightInPixels(Sheet sheet) {
+        int sr = 0;
+        int er = sheet.getLastRowNum();
+
+        String printArea = sheet.getWorkbook().getPrintArea(sheet.getWorkbook().getSheetIndex(sheet));
+        if (!StringUtils.isEmpty(printArea)) {
+            AreaReference areaRef = new AreaReference(printArea, sheet.getWorkbook().getSpreadsheetVersion());
+            CellReference topleft = areaRef.getFirstCell();
+            CellReference bottomright = areaRef.getLastCell();
+            sr = topleft.getRow();
+            er = bottomright.getRow();
+        }
+
+        return getSheetHeightInPixels(sheet, sr, er);
+    }
+
+
+    private float getSheetWidthInPixels(Sheet sheet, int ec) {
+        int sc = 0;
+
+        String printArea = sheet.getWorkbook().getPrintArea(sheet.getWorkbook().getSheetIndex(sheet));
+        if (!StringUtils.isEmpty(printArea)) {
+            AreaReference areaRef = new AreaReference(printArea, sheet.getWorkbook().getSpreadsheetVersion());
+            CellReference topleft = areaRef.getFirstCell();
+            CellReference bottomright = areaRef.getLastCell();
+            sc = topleft.getCol();
+        }
+
+        return getSheetWidthInPixels(sheet, sc, ec);
+    }
+
+    private float getSheetHeightInPixels(Sheet sheet, int er) {
+        int sr = 0;
+
+        String printArea = sheet.getWorkbook().getPrintArea(sheet.getWorkbook().getSheetIndex(sheet));
+        if (!StringUtils.isEmpty(printArea)) {
+            AreaReference areaRef = new AreaReference(printArea, sheet.getWorkbook().getSpreadsheetVersion());
+            CellReference topleft = areaRef.getFirstCell();
+            CellReference bottomright = areaRef.getLastCell();
+            sr = topleft.getRow();
+        }
+
+        return getSheetHeightInPixels(sheet, sr, er);
+    }
+
+
+    private float getSheetWidthInPixels(Sheet sheet, int sc, int ec) {
+        float totalWidth = 0f;
+        for (int i = sc; i < sheet.getRow(0).getLastCellNum() && i <= ec; i++) {
+//            log.debug("width {} {}", i, getColumnWidth(sheet, i));
+            totalWidth += getColumnWidth(sheet, i);
+        }
+        return totalWidth;
+    }
+
+    private float getSheetHeightInPixels(Sheet sheet, int sr, int er) {
+        float totalHeight = 0f;
+        for (int i = sr; i < sheet.getLastRowNum() && i <= er; i++) {
+//            log.debug("height {} {}", i, getRowHeight(sheet, i));
+            totalHeight += getRowHeight(sheet, i);
+        }
+        return totalHeight;
+    }
+
+
+    private float getColumnWidth(Sheet sheet, int col) {
+        return sheet.getColumnWidthInPixels(col);
+    }
+
+    private float getRowHeight(Sheet sheet, int row) {
+        Row r = sheet.getRow(row);
+        // default 96 dpi
+        return (r != null ? r.getHeightInPoints() : sheet.getDefaultRowHeightInPoints()) * 96f / 72f;
+    }
+
+
     public boolean convertExcelToPdf(String inputFilePath, String outputFilePath) {
         try {
             List<String> command = Arrays.asList(
@@ -807,7 +1169,7 @@ public class SampleServiceImpl implements SampleService {
                     "-ExecutionPolicy",
                     "Bypass",
                     "-File",
-                    "E:\\ESOP\\libs\\excel2pdf.ps1",
+                    "D:\\ESOP\\libs\\excel2pdf.ps1",
                     "-InputFilePath",
                     inputFilePath,
                     "-OutputFilePath",
@@ -815,6 +1177,7 @@ public class SampleServiceImpl implements SampleService {
             );
 
             ProcessBuilder processBuilder = new ProcessBuilder(command);
+            log.debug("{}", processBuilder.toString());
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
 

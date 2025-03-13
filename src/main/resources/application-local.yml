@@ -1,5 +1,6 @@
 # port
 server:
+  mode: primary
   http.port: 8000
   port: 18000
   domains: >

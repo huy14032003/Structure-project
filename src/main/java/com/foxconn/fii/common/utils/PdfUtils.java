@@ -1,5 +1,6 @@
 package com.foxconn.fii.common.utils;
 
+import lombok.Value;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -14,14 +15,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 
 
 @Slf4j
 @UtilityClass
 public class PdfUtils {
 
-    public static List<String> convertPdfToImage(File pdfFile, String imageFolderPath, String pages) {
-        List<String> imageList = new ArrayList<>();
+    public static List<List<CroppedImage>> convertPdfToImage(File pdfFile, String imageFolderPath, String pages) {
+        List<List<CroppedImage>> imageList = new ArrayList<>();
 
         PDDocument document;
         try {
@@ -39,29 +41,58 @@ public class PdfUtils {
         PDFRenderer pdfRenderer = new PDFRenderer(document);
         try {
             for (int i = 0; i < document.getNumberOfPages(); i++) {
+                List<CroppedImage> croppedImageList = new ArrayList<>();
+                imageList.add(croppedImageList);
                 if (!pageList.isEmpty() && !pageList.contains(String.valueOf(i))) {
                     continue;
                 }
 
-                String imageName = pdfFile.getName() + (i == 0 ? "" : "(" + i + ")") + ".jpeg";
+                String imageName = pdfFile.getName() + (i == 0 ? "" : "(" + i + ")");
 
-                File image = new File(imageFolderPath + "/" + imageName);
+                File image = new File(imageFolderPath + "/" + imageName + ".jpeg");
 
-                BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(i, 500, org.apache.pdfbox.rendering.ImageType.RGB);
+                BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(i, 600, org.apache.pdfbox.rendering.ImageType.RGB);
 //                addLicenceFII(bufferedImage);
 
                 Rectangle boundingBox = detectBoundingBox(bufferedImage);
-                if (boundingBox != null) {
-                    BufferedImage croppedImage = bufferedImage.getSubimage(boundingBox.x, boundingBox.y, boundingBox.width, boundingBox.height);
-                    ImageIO.write(croppedImage, "jpeg", image);
-                } else {
+//                if (boundingBox != null) {
+//                    BufferedImage croppedImage = bufferedImage.getSubimage(boundingBox.x, boundingBox.y, boundingBox.width, boundingBox.height);
+//                    ImageIO.write(croppedImage, "jpeg", image);
+//                } else {
                     ImageIO.write(bufferedImage, "jpeg", image);
-                }
+//                }
 
                 if (image.length() > 0) {
 //                    generateThumbnail(image);
-                    imageList.add(imageName);
+//                    imageList.add(imageName + ".jpeg");
+                    croppedImageList.add(CroppedImage.of(imageName + ".jpeg", null));
                 }
+
+//                int width = bufferedImage.getWidth();
+//                int height = bufferedImage.getHeight();
+//                boolean[][] visited = new boolean[width][height];
+//                int componentIndex = 0;
+//                for (int y = 0; y < height; y++) {
+//                    for (int x = 0; x < width; x++) {
+//                        int pixel = bufferedImage.getRGB(x, y);
+//                        Color color = new Color(pixel, true);
+//                        if (!isWhite(color) && !visited[x][y]) {
+//                            Rectangle rect = findContour(bufferedImage, visited, x, y);
+//                            if (rect != null) {
+//                                BufferedImage croppedImage = bufferedImage.getSubimage(rect.x, rect.y, rect.width, rect.height);
+//                                ImageIO.write(croppedImage, "jpeg", new File(imageFolderPath + "/" + imageName + "-" + componentIndex + ".jpeg"));
+//                                croppedImageList.add(CroppedImage.of(imageName + "-" + componentIndex + ".jpeg", rect));
+//                                componentIndex++;
+//
+//                                for (int iV = rect.x ; iV < rect.x + rect.width; iV++) {
+//                                    for (int jV = rect.y ; jV < rect.y + rect.height; jV++) {
+//                                        visited[iV][jV] = true;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
             }
         } catch (Exception e) {
             log.error("### Chuyển đổi sang ảnh gặp vấn đề {}", pdfFile.getPath(), e);
@@ -139,10 +170,59 @@ public class PdfUtils {
         return new Rectangle(xMin, yMin, xMax-xMin, yMax-yMin);
     }
 
+    public static Rectangle findContour(BufferedImage img, boolean[][] visited, int startX, int startY) {
+        log.debug("### find contour {} {}", startX, startY);
+        int minX = startX, minY = startY, maxX = startX, maxY = startY;
+        int width = img.getWidth();
+        int height = img.getHeight();
+
+        Stack<int[]> stack = new Stack<>();
+        stack.push(new int[]{startX, startY});
+
+        while (!stack.isEmpty()) {
+            int[] point = stack.pop();
+            int x = point[0], y = point[1];
+            if (x < 0 || y < 0 || x >= width || y >= height || visited[x][y]) {
+                continue;
+            }
+
+            int pixel = img.getRGB(x, y);
+            Color color = new Color(pixel, true);
+            if (isWhite(color)) {
+                continue;
+            }
+
+            visited[x][y] = true;
+            minX = Math.min(minX, x);
+            minY = Math.min(minY, y);
+            maxX = Math.max(maxX, x);
+            maxY = Math.max(maxY, y);
+
+            stack.push(new int[]{x, y + 1});
+            stack.push(new int[]{x, y - 1});
+            stack.push(new int[]{x + 1, y});
+            stack.push(new int[]{x - 1, y});
+        }
+
+        if (maxX - minX + 1 >= 500 && maxY - minY + 1 >= 500) {
+            return new Rectangle(minX, minY, maxX - minX + 1, maxY - minY + 1);
+        }
+
+        return null;
+    }
+
     public boolean isWhite(Color color) {
         int tolerance = 5;
         return color.getRed() >= 255 - tolerance &&
                 color.getGreen() >= 255 - tolerance &&
                 color.getBlue() >= 255 - tolerance;
+    }
+
+    @Value(staticConstructor = "of")
+    public class CroppedImage {
+
+        String path;
+
+        Rectangle originPosition;
     }
 }

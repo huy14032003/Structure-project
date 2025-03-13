@@ -265,4 +265,58 @@ public class ExcelUtils {
         cellStyle.setBorderRight(BorderStyle.THIN);
         return cellStyle;
     }
+
+    public static int getPrintPages(Sheet sheet) {
+        // A4
+        double paperWidth = 595;
+        double paperHeight = 842;
+
+        PrintSetup printSetup = sheet.getPrintSetup();
+        boolean landscape = printSetup.getLandscape();
+        short scale = printSetup.getScale();
+
+        int fitWidth = printSetup.getFitWidth();
+        int fitHeight = printSetup.getFitHeight();
+
+        double effectivePageWidth = landscape ? paperHeight : paperWidth;
+        double effectivePageHeight = landscape ? paperWidth : paperHeight;
+        effectivePageWidth /= (scale / 100.0);
+        effectivePageHeight /= (scale / 100.0);
+
+        int firstRow = sheet.getFirstRowNum();
+        int lastRow = sheet.getLastRowNum();
+
+        double totalHeight = 0;
+        for (int i = firstRow; i <= lastRow; i++) {
+            Row row = sheet.getRow(i);
+            if (row != null) {
+                totalHeight += row.getHeightInPoints();
+            }
+        }
+
+        int firstCol = sheet.getRow(firstRow).getFirstCellNum();
+        int lastCol = sheet.getRow(firstRow).getLastCellNum();
+
+        double totalWidth = 0;
+        for (int i = firstCol; i <= lastCol; i++) {
+            totalWidth += sheet.getColumnWidthInPixels(i) * 0.75f;
+        }
+
+        int pagesWidth = (int) Math.ceil(totalWidth / effectivePageWidth);
+        int pagesHeight = (int) Math.ceil(totalHeight / effectivePageHeight);
+
+        if (sheet.getFitToPage()) {
+            if (fitWidth > 0 && fitHeight > 0) {
+                return Math.min(pagesWidth, fitWidth) * Math.min(pagesHeight, fitHeight);
+            } else if (fitWidth > 0) {
+                return Math.min(pagesWidth, fitWidth) * pagesHeight;
+            } else if (fitHeight > 0) {
+                return pagesWidth * Math.min(pagesHeight, fitHeight);
+            } else {
+                return pagesWidth * pagesHeight;
+            }
+        } else {
+            return pagesWidth * pagesHeight;
+        }
+    }
 }
