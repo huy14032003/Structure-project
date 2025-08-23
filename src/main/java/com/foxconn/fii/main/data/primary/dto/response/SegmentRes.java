@@ -22,5 +22,5 @@ public class SegmentRes implements Serializable {
 
     private Integer index;
 
-    private List<AttributeRes> attributeResList;
+    private List<AttributeRes> attributes;
 }

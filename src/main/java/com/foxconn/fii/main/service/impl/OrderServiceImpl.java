@@ -6,8 +6,7 @@ import com.foxconn.fii.main.data.primary.common.StatusOrderLog;
 import com.foxconn.fii.main.data.primary.dto.request.AttributeValueReq;
 import com.foxconn.fii.main.data.primary.dto.request.OrderReq;
 import com.foxconn.fii.main.data.primary.dto.request.UpdateOrderReq;
-import com.foxconn.fii.main.data.primary.dto.response.AttributeValueRes;
-import com.foxconn.fii.main.data.primary.dto.response.OrderRes;
+import com.foxconn.fii.main.data.primary.dto.response.*;
 import com.foxconn.fii.main.data.primary.model.entity.*;
 import com.foxconn.fii.main.data.primary.repository.*;
 import com.foxconn.fii.main.service.OrderLogService;
@@ -15,14 +14,14 @@ import com.foxconn.fii.main.service.OrderService;
 import com.foxconn.fii.security.model.OAuth2User;
 import com.foxconn.fii.security.service.OAuth2Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -220,6 +219,86 @@ public class OrderServiceImpl implements OrderService {
                 .build();
     }
 
+    @Override
+    public Page<OrderSummaryRes> getOrderByUser(String idCard, Integer pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Page<Order> orders = orderRepository.findByCreateBy(idCard, pageable);
+        return orders.map(order -> OrderSummaryRes.builder()
+                .id(order.getId())
+                .formName(order.getForm().getName())
+                .remark(order.getRemark())
+                .status(order.getStatus().toString())
+                .createdAt(order.getCreateAt())
+                .createdBy(order.getCreateBy())
+                .build());
+    }
+
+    @Override
+    public OrderDetailRes getOrderById(Long orderId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> CommonException.of("Order not found!"));
+
+        return mapToOrderDetailRes(order);
+    }
+
+    private OrderDetailRes mapToOrderDetailRes(Order order) {
+        return OrderDetailRes.builder()
+                .id(order.getId())
+                .remark(order.getRemark())
+                .status(order.getStatus().toString())
+                .createAt(order.getCreateAt())
+                .createBy(order.getCreateBy())
+                .form(mapToFormDetailRes(order.getForm()))
+                .build();
+    }
+
+    private FormDetailRes mapToFormDetailRes(Form form) {
+
+        List<SegmentDetailRes> segmentDetailRes = form.getSegments()
+                .stream()
+                .map(this::mapToSegmentDetailRes)
+                .collect(Collectors.toList());
+
+        return FormDetailRes.builder()
+                .id(form.getId())
+                .name(form.getName())
+                .segments(segmentDetailRes)
+                .build();
+    }
+
+    private SegmentDetailRes mapToSegmentDetailRes(Segment segment) {
+
+        List<AttributeDetailRes> attributeDetailRes = segment.getAttributes()
+                .stream()
+                .map(this::mapToAttributesDetailRes)
+                .collect(Collectors.toList());
+
+        return SegmentDetailRes.builder()
+                .id(segment.getId())
+                .name(segment.getName())
+                .index(segment.getIndex())
+                .attributes(attributeDetailRes)
+                .build();
+    }
 
 
+    private AttributeDetailRes mapToAttributesDetailRes(Attribute attribute) {
+        String value = getEntityValue(attribute);
+        return AttributeDetailRes.builder()
+                .id(attribute.getId())
+                .code(attribute.getCode())
+                .displayName(attribute.getDisplayName())
+                .type(attribute.getType())
+                .entity(attribute.getEntity())
+                .value(value)
+                .build();
+    }
+
+    private String getEntityValue(Attribute attribute) {
+        return Optional.ofNullable(attribute.getAttributeValues())
+                .filter(values -> !values.isEmpty())
+                .map(values -> values.get(0).getEntityValue())
+                .orElse(null);
+    }
 }

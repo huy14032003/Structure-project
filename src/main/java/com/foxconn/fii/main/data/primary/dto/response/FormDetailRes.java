@@ -14,11 +14,11 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class FormRes implements Serializable {
+public class FormDetailRes implements Serializable {
 
     private Long id;
 
     private String name;
 
-    private List<SegmentRes> segments;
+    private List<SegmentDetailRes> segments;
 }

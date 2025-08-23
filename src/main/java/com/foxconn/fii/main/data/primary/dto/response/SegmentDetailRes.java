@@ -9,16 +9,19 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.List;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class FormRes implements Serializable {
+public class SegmentDetailRes implements Serializable {
 
     private Long id;
 
     private String name;
 
-    private List<SegmentRes> segments;
+    private Integer index;
+
+    private List<AttributeDetailRes> attributes;
 }

@@ -7,18 +7,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class FormRes implements Serializable {
+public class AttributeDetailRes implements Serializable {
 
     private Long id;
 
-    private String name;
+    private String code;
 
-    private List<SegmentRes> segments;
+    private String displayName;
+
+    private String type;
+
+    private String entity;
+
+    private String value; //lấy value từ attributeValue nếu có
 }
