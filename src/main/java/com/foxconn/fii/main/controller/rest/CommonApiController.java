@@ -53,7 +53,7 @@ public class CommonApiController {
 
     @GetMapping("/api/greeting")
     public String greeting(HttpServletRequest request, Locale locale) {
-//        return "Welcome to SAMPLE-SYSTEM system!\n--- VN FII Team ---";
+//        return "Welcome to sample-system system!\n--- VN FII Team ---";
         return messageSource.getMessage("greeting", null, locale);
     }
 

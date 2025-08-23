@@ -4,7 +4,7 @@ server:
   http.port: 8000
   port: 18000
   domains: >
-    http://localhost:8000/sample-system
+      http://localhost:8000/sample-system
   servlet:
     context-path: /sample-system
     static-path: /ws-data
@@ -55,8 +55,8 @@ spring:
   datasource:
 #    url: jdbc:h2:mem:b04;DB_CLOSE_DELAY=-1
 #    driver-class-name: org.h2.Driver
-    url: jdbc:sqlserver://10.224.81.234:3000;databaseName=sop
-    username: sa
+    url: jdbc:sqlserver://10.224.81.228:3000;databaseName=ENF_TRACKING
+    username: fii
     password: Foxconn168!!
     hibernate.dialect: org.hibernate.dialect.SQLServer2008Dialect
     hikari:

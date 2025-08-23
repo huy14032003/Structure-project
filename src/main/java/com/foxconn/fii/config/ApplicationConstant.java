@@ -2,7 +2,7 @@ package com.foxconn.fii.config;
 
 public class ApplicationConstant {
 
-    public static final String APPLICATION_NAME = "SAMPLE-SYSTEM";
+    public static final String APPLICATION_NAME = "sample-system";
 
     public static final String APPLICATION_NAME_HRM = "";
 

@@ -60,7 +60,7 @@ logging:
 ##### 1.3.2 In com.foxconn.fii.config.ApplicationConstant.java
 Change project name for notify source 
 ```
-public static final String APPLICATION_NAME = "SAMPLE-SYSTEM";
+public static final String APPLICATION_NAME = "sample-system";
 
 ```
 
