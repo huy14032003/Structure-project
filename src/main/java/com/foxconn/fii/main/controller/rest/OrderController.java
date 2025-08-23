@@ -5,6 +5,7 @@ import com.foxconn.fii.common.response.CommonResponse;
 import com.foxconn.fii.main.data.primary.dto.request.AttributeValueReq;
 import com.foxconn.fii.main.data.primary.dto.request.OrderReq;
 import com.foxconn.fii.main.data.primary.dto.request.UpdateOrderReq;
+import com.foxconn.fii.main.data.primary.dto.response.OrderRes;
 import com.foxconn.fii.main.data.primary.model.entity.Order;
 import com.foxconn.fii.main.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +25,10 @@ public class OrderController {
         return CommonResponse.success(order);
     }
 
-    @PutMapping("{/orderId}")
-    public CommonResponse<Order> updateOrder(@PathVariable("orderId") Long orderId,
-                                             @RequestBody UpdateOrderReq newRequest) {
-        Order order = orderService.updateOrder(orderId, newRequest);
+    @PutMapping("/{orderId}")
+    public CommonResponse<OrderRes> updateOrder(@PathVariable("orderId") Long orderId,
+                                                @RequestBody UpdateOrderReq newRequest) {
+        OrderRes order = orderService.updateOrder(orderId, newRequest);
         return CommonResponse.success(order);
     }
 

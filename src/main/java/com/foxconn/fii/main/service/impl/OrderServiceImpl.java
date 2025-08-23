@@ -6,6 +6,8 @@ import com.foxconn.fii.main.data.primary.common.StatusOrderLog;
 import com.foxconn.fii.main.data.primary.dto.request.AttributeValueReq;
 import com.foxconn.fii.main.data.primary.dto.request.OrderReq;
 import com.foxconn.fii.main.data.primary.dto.request.UpdateOrderReq;
+import com.foxconn.fii.main.data.primary.dto.response.AttributeValueRes;
+import com.foxconn.fii.main.data.primary.dto.response.OrderRes;
 import com.foxconn.fii.main.data.primary.model.entity.*;
 import com.foxconn.fii.main.data.primary.repository.*;
 import com.foxconn.fii.main.service.OrderLogService;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -84,12 +87,18 @@ public class OrderServiceImpl implements OrderService {
         return savedOrder;
     }
 
+
     @Override
     @Transactional
-    public Order updateOrder(Long orderId, UpdateOrderReq newRequest) {
+    public OrderRes updateOrder(Long orderId, UpdateOrderReq newRequest) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> CommonException.of("Order not found!"));
+
+        // Validate request
+        if (newRequest.getAttributeValues() == null || newRequest.getAttributeValues().isEmpty()) {
+            throw CommonException.of("Attribute values cannot be empty!");
+        }
 
         // lấy list attributeIds từ request
         List<Long> attributeIds = newRequest.getAttributeValues()
@@ -109,14 +118,18 @@ public class OrderServiceImpl implements OrderService {
         Map<Long, AttributeValue> attributeValueMap = existingValues.stream()
                 .collect(Collectors.toMap(av -> av.getAttribute().getId(), av -> av));
 
+        // Collection để build response
+        List<AttributeValueRes> responseAttributeValues = new ArrayList<>();
+
         // duyệt request
         for (AttributeValueReq avg : newRequest.getAttributeValues()) {
             Attribute attribute = attributeMap.get(avg.getAttributeId());
             if (attribute == null) {
-                throw CommonException.of("Attribute not found!");
+                throw CommonException.of("Attribute not found with id: " + avg.getAttributeId());
             }
 
             AttributeValue attributeValue = attributeValueMap.get(avg.getAttributeId());
+            Long savedAttributeValueId;
 
             if (attributeValue == null) {
                 // chưa có → tạo mới
@@ -124,7 +137,8 @@ public class OrderServiceImpl implements OrderService {
                         .attribute(attribute)
                         .entityValue(avg.getValue())
                         .build();
-                attributeValueRepository.save(attributeValue);
+                attributeValue = attributeValueRepository.save(attributeValue);
+                savedAttributeValueId = attributeValue.getId();
 
                 // tạo quan hệ order ↔ attribute_value
                 orderAttributeValueRepository.save(OrderAttributeValue.builder()
@@ -132,12 +146,33 @@ public class OrderServiceImpl implements OrderService {
                         .attributeValue(attributeValue)
                         .build());
 
+                // log tạo mới attributeValue
+                AttributeValueLog attributeValueLog = AttributeValueLog.builder()
+                        .attributeValue(attributeValue)
+                        .oldValue(null)
+                        .newValue(avg.getValue())
+                        .changeAt(LocalDateTime.now())
+                        .changeBy(getCurrentUsername())
+                        .reason(avg.getReason())
+                        .build();
+                attributeValueLogRepository.save(attributeValueLog);
+
+                orderLogRepository.save(OrderLog.builder()
+                        .order(order)
+                        .attributeValueLog(attributeValueLog)
+                        .type(StatusOrderLog.CREATE)
+                        .createAt(LocalDateTime.now())
+                        .createBy(getCurrentUsername())
+                        .build());
+
             } else {
                 // đã có → update nếu giá trị thay đổi
                 String oldValue = attributeValue.getEntityValue();
+                savedAttributeValueId = attributeValue.getId();
+
                 if (!Objects.equals(oldValue, avg.getValue())) {
                     attributeValue.setEntityValue(avg.getValue());
-                    attributeValueRepository.save(attributeValue);
+                    attributeValue = attributeValueRepository.save(attributeValue);
 
                     // log thay đổi attributeValue
                     AttributeValueLog attributeValueLog = AttributeValueLog.builder()
@@ -160,6 +195,13 @@ public class OrderServiceImpl implements OrderService {
                             .build());
                 }
             }
+
+            // Build response item - KHÔNG access lazy properties
+            responseAttributeValues.add(AttributeValueRes.builder()
+                    .id(savedAttributeValueId)
+                    .attributeId(avg.getAttributeId())
+                    .value(avg.getValue()) // Dùng value từ request, không từ entity
+                    .build());
         }
 
         // update remark nếu có
@@ -167,8 +209,17 @@ public class OrderServiceImpl implements OrderService {
             order.setRemark(newRequest.getRemark());
         }
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+        // Build response - KHÔNG access lazy collections
+        return OrderRes.builder()
+                .id(savedOrder.getId())
+                .remark(savedOrder.getRemark())
+                .status(savedOrder.getStatus())
+                .attributeValues(responseAttributeValues) // Dùng collection đã build
+                .build();
     }
+
 
 
 }
