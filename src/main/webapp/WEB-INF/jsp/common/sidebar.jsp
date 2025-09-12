@@ -15,7 +15,7 @@
         <!-- menu cấp 1 -->
         <ul class="flex-grow-1 list-unstyled d-flex flex-column gap-2 ps-0">
             <li>
-                <a href="/sample-system/"
+                <a data-path="/" href="/sample-system/"
                     class="w-100 text-start btn btn-toggle d-flex justify-content-between align-items-center gap-2 border-0 app_aside-link--animation app_aside-link--size">
                     <div class="d-flex align-items-center gap-3">
                         <svg width="25" height="25" fill="currentColor">
@@ -27,7 +27,7 @@
             </li>
 
             <li class="">
-                <a href="/dashboad"
+                <a data-path="form-info-equipment" href="/sample-system/form-info-equipment"
                     class="w-100 text-start btn btn-toggle d-flex justify-content-between align-items-center gap-2 border-0 app_aside-link--animation app_aside-link--size">
                     <div class="d-flex align-items-center gap-3">
                         <svg width="25" height="25" fill="currentColor">

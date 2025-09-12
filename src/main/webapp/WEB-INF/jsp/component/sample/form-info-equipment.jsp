@@ -43,22 +43,13 @@
       display: inline-block;  
     }
 </style>
-  <div class=" row g-3 ">
-    <div class="col-3">
-      <div class="card bg-white border-0 mb-4 h-100 card-step">
-        <div class="card-body" >
-            <div >
-                <ol class="stepMenu" id="stepMenu">  
-                </ol>
-            </div>
-        </div>
-      </div>
-    </div>
+  <div class=" mx-2 row g-3 ">
+    
     <div class="col-9">
       <div class="card bg-white border-0 mb-4  h-100" >
         <div class="card-header bg-white border-0 p-3 pb-0">
           <div class="d-flex align-items-center justify-content-start">
-            <span  class="fw-bold" id="title">${title}</span>
+            <!-- <span  class="fw-bold" id="title">${title}</span> -->
           </div>
         </div>
         <div class="card-body">
@@ -78,6 +69,16 @@
               <span>Save your change</span>
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="card bg-white border-0 mb-4 h-100 card-step">
+        <div class="card-body" >
+            <div >
+                <ol class="stepMenu" id="stepMenu">  
+                </ol>
+            </div>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 /logs/
 /ws-data/
 /cache/
-
+/.vscode/
 ### default ###
 /target/
 !.mvn/wrapper/maven-wrapper.jar

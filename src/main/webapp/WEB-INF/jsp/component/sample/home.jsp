@@ -46,7 +46,7 @@
     <div class="card bg-white border-0">
       <div class="card-header bg-white border-0 p-3 pb-0">
         <div class="d-flex align-items-center justify-content-start">
-          <span class="fw-bold">LIST OF ORDER</span>
+          <!-- <span class="fw-bold">LIST OF ORDER</span> -->
         </div>
       </div>
       <div class="card-body">
