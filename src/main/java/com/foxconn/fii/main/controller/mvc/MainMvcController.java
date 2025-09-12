@@ -1,5 +1,6 @@
 package com.foxconn.fii.main.controller.mvc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foxconn.fii.security.model.OAuth2User;
 import com.foxconn.fii.security.service.OAuth2Service;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,9 @@ public class MainMvcController {
     @Autowired
     private OAuth2Service authService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Value("${server.domains}")
     private String[] domains;
 
@@ -30,7 +34,14 @@ public class MainMvcController {
         model.addAttribute("path", "home");
         model.addAttribute("title", "Index");
 
-        return commonView(model, "application", false);
+        return commonView(model, "main", true);
+    }
+    @RequestMapping("/form-info-equipment")
+    public String formInfoEquipment(Model model) {
+        model.addAttribute("path", "form-info-equipment");
+        model.addAttribute("title", "EQUIPMENT INFORMATION FORM");
+
+        return commonView(model, "main", true);
     }
 
     @RequestMapping("/handle-login-success")
@@ -95,6 +106,7 @@ public class MainMvcController {
                 model.addAttribute("empNo", currentUser.getUsername());
                 model.addAttribute("nameVn", currentUser.getName());
                 model.addAttribute("nameCn", currentUser.getChineseName());
+                model.addAttribute("dataLogin", objectMapper.writeValueAsString(currentUser) );
             } catch (Exception e) {
                 return "redirect:/error-401";
             }

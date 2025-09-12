@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-Application<sample-system>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.foxconn.fii.Application",
+            "projectName": "sample-system",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ],
+    
+}

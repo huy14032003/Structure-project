@@ -82,7 +82,7 @@ public class CommonApiController {
     public ListResponse<String> uploadFile(
             @PathVariable String fileType,
             @RequestPart MultipartFile[] files,
-            Integer originalFlag) {
+            Integer originalFlag) { 
 
         if (!"|public|tmp|file|image|audio|video|".contains("|" + fileType + "|")) {
             throw CommonException.of("File type {} is not support", fileType);

@@ -68,7 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         };
 
         String[] ignoredList = {
-//                "/**",
+               "/**",
                 "/",
                 "/login**",
                 "/sign-in",

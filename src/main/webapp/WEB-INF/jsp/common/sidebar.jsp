@@ -1,251 +1,137 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<style>
-    .sidebar-mini .nav-sidebar,
-    .sidebar-mini .nav-sidebar .nav-link,
-    .sidebar-mini .nav-sidebar>.nav-header {
-        color: rgba(248, 248, 250, 0.8);
-    }
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+    <aside id="appAside"
+        class="app_aside-left--size fixed-top bg-white min-vh-100 px-2 py-3 gap-3 flex-column overflow-auto">
+        <header class=" app_aside-logo--size d-flex gap-3 align-items-center mb-3">
+            <button
+                class="border-0 btn p-0 app_aside-link--size w-100 mb-3">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="app_aside-icon d-flex justify-content-center align-items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><!-- Icon from Huge Icons by Hugeicons - undefined --><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="m8.643 3.146l-1.705.788C4.313 5.147 3 5.754 3 6.75s1.313 1.603 3.938 2.816l1.705.788c1.652.764 2.478 1.146 3.357 1.146s1.705-.382 3.357-1.146l1.705-.788C19.687 8.353 21 7.746 21 6.75s-1.313-1.603-3.938-2.816l-1.705-.788C13.705 2.382 12.879 2 12 2s-1.705.382-3.357 1.146"/><path d="M20.788 11.097c.141.199.212.406.212.634c0 .982-1.313 1.58-3.938 2.776l-1.705.777c-1.652.753-2.478 1.13-3.357 1.13s-1.705-.377-3.357-1.13l-1.705-.777C4.313 13.311 3 12.713 3 11.731c0-.228.07-.435.212-.634"/><path d="M20.377 16.266c.415.331.623.661.623 1.052c0 .981-1.313 1.58-3.938 2.776l-1.705.777C13.705 21.624 12.879 22 12 22s-1.705-.376-3.357-1.13l-1.705-.776C4.313 18.898 3 18.299 3 17.318c0-.391.208-.72.623-1.052"/></g></svg>
+                    </i>
+                    <span class="text-nowrap app_aside-hide fw-bold text-primary fs-5">ENF-TRACKING</span>
+                </div>
+            </button>
+        </header>
+        <!-- menu cấp 1 -->
+        <ul class="flex-grow-1 list-unstyled d-flex flex-column gap-2 ps-0">
+            <li>
+                <a href="/sample-system/"
+                    class="w-100 text-start btn btn-toggle d-flex justify-content-between align-items-center gap-2 border-0 app_aside-link--animation app_aside-link--size">
+                    <div class="d-flex align-items-center gap-3">
+                        <svg width="25" height="25" fill="currentColor">
+                            <use href="/sample-system/assets/images/icons.svg#iconHome"></use>
+                        </svg>
+                        <span class="text-nowrap app_aside-hide">Trang chủ</span>
+                    </div>
+                </a>
+            </li>
 
-    .sidebar::-webkit-scrollbar {
-        width: 0;
-    }
+            <li class="">
+                <a href="/dashboad"
+                    class="w-100 text-start btn btn-toggle d-flex justify-content-between align-items-center gap-2 border-0 app_aside-link--animation app_aside-link--size">
+                    <div class="d-flex align-items-center gap-3">
+                        <svg width="25" height="25" fill="currentColor">
+                            <use href="/sample-system/assets/images/icons.svg#iconHome"></use>
+                        </svg>
+                        <span class="text-nowrap app_aside-hide">Dashboad</span>
+                    </div>
+                </a>
+            </li>
 
-    .nav-sidebar .nav-link p {
-        color: #fff;
-    }
-
-    .nav-sidebar>.nav-item>.nav-link>img,
-    [class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link>img {
-        width: 25px;
-        height: 25px;
-    }
-
-    .layout-navbar-fixed .wrapper .brand-link {
-        width: 350px;
-    }
-
-    .layout-navbar-fixed .wrapper .main-sidebar:hover .brand-link {
-        width: 350px !important;
-    }
-
-    body:not(.sidebar-mini-md) .content-wrapper,
-    body:not(.sidebar-mini-md) .main-footer,
-    body:not(.sidebar-mini-md) .main-header {
-        margin-left: 350px;
-    }
-
-    .main-sidebar:hover {
-        width: 350px !important;
-    }
-
-    .main-sidebar,
-    .main-sidebar::before {
-        width: 350px;
-    }
-
-    .brand-link {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-
-        background-color: #2061C5 !important;
-    }
-
-    .brand-link .brand-image {
-        margin: 0;
-    }
-
-    .brand-link:hover .brand-image {
-        transition: all 1s;
-        animation: spin 3s linear infinite;
-    }
-
-    .brand-text {
-        font-weight: bold !important;
-        letter-spacing: 2px;
-        text-shadow: 2px 2px 1px black;
-        color: #d2eeff;
-    }
-
-
-    @keyframes spin {
-        0% {
-            transform: rotateY(0deg);
-        }
-
-        50% {
-            transform: rotateY(180deg);
-        }
-
-        100% {
-            transform: rotateY(360deg);
-        }
-    }
-
-    @media screen and (max-width: 1000px) {
-
-        body:not(.sidebar-mini-md) .content-wrapper,
-        body:not(.sidebar-mini-md) .main-footer,
-        body:not(.sidebar-mini-md) .main-header {
-            margin-left: auto !important;
-        }
-
-        .main-sidebar:hover {
-            width: auto !important;
-        }
-
-        .main-sidebar,
-        .main-sidebar::before {
-            width: auto !important;
-        }
-    }
-
-    @media screen and (min-width: 1024px) and (max-width: 1365px) {
-        div.sidebar {
-            font-size: 14px;
-        }
-
-        .nav-sidebar>.nav-item .nav-icon.fas {
-            font-size: 1rem;
-        }
-
-        .nav-sidebar>.nav-item>.nav-link>img,
-        [class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link>img {
-            width: 23px;
-            height: 23px;
-        }
-    }
-
-    @media screen and (min-width: 1366px) and (max-width: 1919px) {
-        div.sidebar {
-            font-size: 15px;
-        }
-
-        .nav-sidebar>.nav-item .nav-icon.fas {
-            font-size: 1.1rem;
-        }
-
-        [class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link>img {
-            width: 23px;
-            height: 23px;
-        }
-    }
-</style>
-<!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-dark-primary elevation-4"
-    style="background-image: linear-gradient(#2061C5 , #2061C5);">
-    <!-- Brand Logo -->
-    <a href="/sample-system/" class="brand-link">
-        <!-- <img src="/sample-system/assets/dist/img/iconM2.png" alt="Material Management Logo" class="brand-image elevation-3"
-            style="opacity: .8"> -->
-        <img src="/sample-system/assets/images/logoFII.png" alt="logo" class="brand-image">
-        <span class="brand-text font-weight-light" style="font-size: 18px;">SAMPLE SYSTEM</span>
-    </a>
-
-    <div class="sidebar">
-        <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu"
-                data-accordion="false">
-                <li class="nav-item" path="home">
-                    <a href="/sample-system/" class="nav-link">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>Home</p>
-                    </a>
-                </li>
-                <!-- <li class="nav-item has-treeview">
-                    <a href="/sample-system/setting" class="nav-link">
-                        <i class="nav-icon fas fa-cogs"></i>
-                        <p>Setting</p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                            <li class="nav-item" path="lms-setting">
-                                <a href="/sample-system/setting" class="nav-link">
-                                    <i class="nav-icon fas fa-truck-moving"></i>
-                                    <p>
-                                        Setting Truck
-                                    </p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/sample-system/setting-map" class="nav-link">
-                                    <i class="nav-icon fas fa-map-marked-alt"></i>
-                                    <p>
-                                        Setting Distance
-                                    </p>
-                                </a>
-                            </li>
-                        </ul>
-                </li> -->
-
-                <li class="nav-item logout">
-                    <a href="#" class="nav-link" onclick="logout()">
-                        <i class="nav-icon fas fa-sign-out-alt"></i>
-                        <p>
-                            <spring:message code="logout" />
-                        </p>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-    <script>
-        var userInfo = JSON.parse(window.localStorage.getItem('userInfo'));
-        var role = '';
-
-        if (!isFalsy(userInfo)) {
-            role = userInfo.role;
-        }
-
-        let userDataPath = {
-            // Các người dùng thông thường không thể truy cập
-            deny: [
-                'truck-dispatch',
-                'management-common',
-                'ga/order/dispatch',
-                'fixed-schedule'
-            ]
-        };
-
-        let guardianDataPath = {
-            // Các trang bảo vệ có thể truy cập
-            accept: [
-                'port-monitoring'
-            ],
-            // Các trang bảo vệ không thể truy cập
-            deny: [
-                'general-administration',
-                'zero-waste'
-            ]
-        };
-
-        let menuLv1 = document.querySelectorAll('.sidebar > nav > ul > li');
-
-        if (role == 'USER') {
-            for (let i = 0; i < menuLv1.length; i++) {
-                
-                let menuLv2 = menuLv1[i].querySelectorAll('li');
-                for (let j = 0; j < menuLv2.length; j++) {
-                    if (userDataPath.deny.indexOf(menuLv2[j].getAttribute('data-path')) > -1) {
-                        menuLv2[j].remove();
-                    }
-                }
-            }
-        } else if (role == 'GUARDIAN') {
-            for (let i = 0; i < menuLv1.length; i++) {
-
-                if (guardianDataPath.deny.indexOf(menuLv1[i].getAttribute('data-path')) > -1) {
-                    menuLv1[i].remove();
-
-                } else {
-                    let menuLv2 = menuLv1[i].querySelectorAll('li');
-                    for (let j = 0; j < menuLv2.length; j++) {
-                        if (guardianDataPath.accept.indexOf(menuLv2[j].getAttribute('data-path')) == -1) {
-                            menuLv2[j].remove();
-                        }
-                    }
-
-                }
-            }
-        }
-    </script>
-</aside>
+            <!-- menu đa cấp -->
+            <li class=" ">
+                <a
+                    class=" app_aside-link--size w-100 text-start btn btn-toggle d-flex justify-content-between align-items-center gap-2 border-0 app_aside-link--animation mb-2"
+                    data-bs-toggle="collapse" data-bs-target="#menuLevel1" aria-expanded="false">
+                    <div class="d-flex align-items-center gap-3">
+                        <svg width="25" height="25" fill="currentColor">
+                            <use href="/sample-system/assets/images/icons.svg#iconHome"></use>
+                        </svg>
+                        <span class="text-nowrap app_aside-hide">Quản lý nhập xuất</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-chevron-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
+                    </svg>
+                </a>
+                <div class="collapse" id="menuLevel1">
+                    <ul class="w-100 list-unstyled app_aside-hide ps-2">
+                        <!-- Cấp 2 -->
+                        <li class="">
+                            <a class="app_aside-link--size w-100 text-start btn btn-toggle d-flex align-items-center justify-content-between gap-2 border-0 app_aside-link--animation mb-2"
+                                data-bs-toggle="collapse" data-bs-target="#menuLevel2" aria-expanded="false">
+                                <div class="d-flex justify-content-start align-items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor"
+                                        class="bi bi-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                    </svg>
+                                    <span class="">Danh mục</span>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-chevron-right" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd"
+                                        d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
+                                </svg>
+                            </a>
+                            <div class="collapse" id="menuLevel2">
+                                <ul class="list-unstyled ps-2">
+                                    <!-- Cấp 3 -->
+                                    <li class="mb-2">
+                                        <a href="/admin"
+                                            class="w-100 text-start btn btn-toggle d-flex justify-content-between align-items-center gap-2 border-0 app_aside-link--animation app_aside-link--size">
+                                            <div class="d-flex justify-content-start align-items-center gap-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                    fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                                </svg>
+                                                <span>Nhập thông tin</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li class="mb-2">
+                                        <a href="/outputsalary"
+                                            class="w-100 text-start btn btn-toggle d-flex justify-content-between align-items-center gap-2 border-0 app_aside-link--animation app_aside-link--size">
+                                            <div
+                                                class="d-flex justify-content-start align-items-center gap-2 app_aside-hide">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                                    fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                                </svg>
+                                                <span>Xuất chi tiêu</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="">
+                            <a href="/report"
+                                class="w-100 text-start btn btn-toggle d-flex justify-content-between align-items-center gap-2 border-0 app_aside-link--animation app_aside-link--size">
+                                <div class="d-flex justify-content-start align-items-center gap-2 app_aside-hide">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor"
+                                        class="bi bi-circle" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                    </svg>
+                                    <span>Báo cáo</span>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li>
+                <a onclick="logout()" href="#"
+                    class="w-100 text-start btn btn-toggle d-flex justify-content-between align-items-center gap-2 border-0 app_aside-link--animation app_aside-link--size">
+                    <div class="d-flex align-items-center gap-3">
+                        <svg width="25" height="25" fill="currentColor">
+                            <use href="/sample-system/assets/images/icons.svg#iconHome"></use>
+                        </svg>
+                        <span class="text-nowrap app_aside-hide">Logout</span>
+                    </div>
+                </a>
+            </li>
+        </ul>
+    </aside>
