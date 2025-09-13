@@ -30,6 +30,7 @@
           <script src="/sample-system/assets/plugins/tom-select/tom-select.min.js"></script>
           <script src="/sample-system/assets/js/applib.js"></script>
           <script type="module" src="/sample-system/assets/js/main.js"></script>
+          <script src="/sample-system/assets/plugins/cookie/cookie.min.js"></script>
         </head>
         <body>
           <%@ include file="common/lang.jsp" %>

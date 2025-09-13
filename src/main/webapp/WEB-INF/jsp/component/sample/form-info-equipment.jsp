@@ -1,47 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <!-- <script src="/assets/js/custom/formInfo.js"></script> -->
 <script src="assets/js/custom/form-info-equipment.js"></script>
-<style>
-    ol
-    {
-        list-style-type: none;
-        padding: 0;
-        
-    }
-    ol>li
-    {
-        margin-bottom: 15px;
-        padding: 10px;
-        cursor: pointer;
-        height: 50px;
-        display: flex;
-        justify-content: start;
-        align-items: center;
-        border-radius: 15px;    
-      
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
-    ol>li:hover{
-      background-color: #F2F2F7;
-      
-    }
-    li.active
-    {
-        background-color: #FFF3CD;
-    }
-    li.active:hover
-    {
-      background-color: #FFF3CD;
-    }
 
-    .li-text {
-      max-width: 200px;       
-      white-space: nowrap;    
-      overflow: hidden;       
-      text-overflow: ellipsis;
-      display: inline-block;  
-    }
 </style>
   <div class=" mx-2 row g-3 ">
     
@@ -49,7 +9,6 @@
       <div class="card bg-white border-0 mb-4  h-100" >
         <div class="card-header bg-white border-0 p-3 pb-0">
           <div class="d-flex align-items-center justify-content-start">
-            <!-- <span  class="fw-bold" id="title">${title}</span> -->
           </div>
         </div>
         <div class="card-body">

@@ -43,6 +43,13 @@ public class MainMvcController {
 
         return commonView(model, "main", true);
     }
+    @RequestMapping("/home2")
+    public String home2(Model model) {
+        model.addAttribute("path", "home2");
+        model.addAttribute("title", "Home 2");
+
+        return commonView(model, "main", true);
+    }
 
     @RequestMapping("/handle-login-success")
     public void handleLoginSuccess(
@@ -68,36 +75,6 @@ public class MainMvcController {
         }
     }
 
-//    @RequestMapping("/login-with-icivet")
-//    public void loginWithIcivet(
-//            HttpServletRequest request,
-//            HttpServletResponse response,
-//            String redirectUrl,
-//            String code) {
-//        try {
-//            String appid = "sslGW9wN1Mw1";
-//            CivetOAuth oAuth = new CivetOAuth(appid);
-//            UserInfo userInfo = oAuth.FastGetUserInfo(request);
-//
-//            if (userInfo.getCivetno() != null) {
-//                UserContext userContext = authService.getUserInformation(userInfo.getCivetno());
-//                SecurityContext context = SecurityContextHolder.createEmptyContext();
-//                Authentication authentication =  new UsernamePasswordAuthenticationToken(userInfo.getCivetno(), null, userContext.getAuthorities());
-////                Authentication authentication = new JwtAuthenticationToken(userContext, userContext.getAuthorities());
-//                context.setAuthentication(authentication);
-//                SecurityContextHolder.setContext(context);
-//            }
-//
-//            if (StringUtils.isEmpty(redirectUrl)) {
-//                response.sendRedirect(request.getHeader("referer"));
-//            } else {
-//                response.sendRedirect(redirectUrl);
-//            }
-//
-//        } catch (Exception e) {
-//            log.error("### logout error", e);
-//        }
-//    }
 
     private String commonView(Model model, String view, boolean authorityFlag) {
         if (authorityFlag) {

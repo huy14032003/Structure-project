@@ -38,13 +38,13 @@ const YourPage = (() => {
   // }
   async function loadDetailOrder()
   {
-    _state.orderId=Utils.getParamsURL('orderId')
-    _state.renderOrder = (await getOrderId({ orderId: _state.orderId }))?.form?.segments ?? [];
-    // await requestHandlers.getOrderId({orderId: _state.orderId})
-    // console.log(_state.renderOrder);
-    renderForm(_state.renderOrder);
-    // console.log(_state.renderOrder);
-    renderStep(_state.renderOrder);
+    // // _state.orderId=Utils.getParamsURL('orderId')
+    // _state.renderOrder = (await getOrderId({ orderId: _state.orderId }))?.form?.segments ?? [];
+    // // await requestHandlers.getOrderId({orderId: _state.orderId})
+    // // console.log(_state.renderOrder);
+    // renderForm(_state.renderOrder);
+    // // console.log(_state.renderOrder);
+    // renderStep(_state.renderOrder);
   }
 
 
@@ -181,7 +181,7 @@ const YourPage = (() => {
   }
 
   function init(opts = {}) {
-    Utils.merge(_opts, opts);
+    // Utils.merge(_opts, opts);
     handleAddEventListener();
     // loadDataForm();
     loadDetailOrder();

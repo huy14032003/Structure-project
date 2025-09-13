@@ -42,7 +42,7 @@
   </div>
 </div>
 
-  <div class=" mx-4">
+  <div class=" mx-3 ">
     <div class="card bg-white border-0">
       <div class="card-header bg-white border-0 p-3 pb-0">
         <div class="d-flex align-items-center justify-content-start">

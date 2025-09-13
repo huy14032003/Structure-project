@@ -8,6 +8,9 @@
     <c:when test="${path == 'form-info-equipment'}">
         <%@ include file="component/sample/form-info-equipment.jsp" %>
     </c:when>
+    <c:when test="${path == 'home2'}">
+        <%@ include file="component/sample/home2.jsp" %>
+    </c:when>
 
 
 
